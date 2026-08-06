@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://longevity-clinic.vercel.app/sitemap.xml
+Sitemap: https://longevityclinic.vercel.app/sitemap.xml
