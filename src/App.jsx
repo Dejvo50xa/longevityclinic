@@ -13,6 +13,7 @@ const NAV = [
   ['Fyzioterapie', 'fyzioterapie'],
   ['Masáže', 'masaze'],
   ['Programy', 'programy'],
+  ['3D sauna', '?sauna'],
 ]
 
 const DIAGNOSTIKA = [
@@ -403,6 +404,7 @@ export default function App() {
   }, [menu])
 
   const go = useCallback((e, id) => {
+    if (id === "?sauna") return;
     e.preventDefault()
     setMenu(false)
     const el = document.getElementById(id)
@@ -444,7 +446,7 @@ export default function App() {
         </a>
         <div className="nav-links">
           {NAV.map(([label, id]) => (
-            <a key={id} href={`#${id}`} onClick={(e) => go(e, id)}>
+            <a key={id} href={id === '?sauna' ? '?sauna' : `#${id}`} onClick={(e) => go(e, id)}>
               {label}
             </a>
           ))}
@@ -466,7 +468,7 @@ export default function App() {
 
       <div className={menu ? 'mobile-menu open' : 'mobile-menu'}>
         {NAV.map(([label, id]) => (
-          <a key={id} href={`#${id}`} onClick={(e) => go(e, id)}>
+          <a key={id} href={id === '?sauna' ? '?sauna' : `#${id}`} onClick={(e) => go(e, id)}>
             {label}
           </a>
         ))}
@@ -865,7 +867,7 @@ export default function App() {
           </a>
           <div className="foot-links">
             {NAV.map(([label, id]) => (
-              <a key={id} href={`#${id}`} onClick={(e) => go(e, id)}>
+              <a key={id} href={id === '?sauna' ? '?sauna' : `#${id}`} onClick={(e) => go(e, id)}>
                 {label}
               </a>
             ))}
