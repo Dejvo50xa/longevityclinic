@@ -30,3 +30,6 @@
 .sauna-bottom nav button{background:#10261fe8;border:1px solid #ffffff29;border-radius:4px;min-height:34px;padding:8px 11px}
 .sauna-bottom nav button.selected{background:#e9dfbc;border-color:#e9dfbc}
 @media(max-width:700px){.sauna-bottom nav{width:max-content;max-width:100%}.sauna-bottom nav button{min-height:34px;padding:8px 10px}}
+
+/* Reset clinic footer styles inherited by the 3D overlay. */
+.sauna-page .sauna-bottom{padding:0;background:transparent;border:0;box-shadow:none;backdrop-filter:none;min-height:0}
