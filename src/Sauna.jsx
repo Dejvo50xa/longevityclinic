@@ -3,12 +3,14 @@ import * as T from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import './sauna.css'
 const stops=[
- {name:'Celý areál',tag:'01 / AREÁL',text:'Tři sauny a odpočívárna v otevřené louce. Cestičky se setkávají u ochlazovací kádě a navazují na přístupovou cestu.',pos:[24,24,32],target:[0,0,1],point:[0,3,0]},
+ {name:'Celý areál',tag:'01 / AREÁL',text:'Tři sauny a odpočívárna v otevřené louce. Cestičky se setkávají u ochlazovací kádě a navazují na přístupovou cestu.',pos:[44,48,61],target:[0,0,-3],point:[0,3,0]},
  {name:'Finská',tag:'02 / FINSKÁ SAUNA',text:'Dřevěná sauna s kamny a stupňovitými lavicemi. Řez odkrývá její interiér.',pos:[7,5,8],target:[0,1,0],point:[0,3.4,0]},
- {name:'Herbal',tag:'03 / BYLINNÁ SAUNA',text:'Bylinná sauna se zelenými akcenty, miskou na byliny a výsadbou u vstupu.',pos:[-4,6,9],target:[-11,1,-2],point:[-11,3.5,-2]},
- {name:'Solná',tag:'04 / SOLNÁ SAUNA',text:'Sauna s podsvícenou stěnou ze solných bloků, světlými lavicemi a klidným jantarovým světlem.',pos:[17,6,8],target:[11,1,-2],point:[11,3.5,-2]},
- {name:'Odpočívárna',tag:'05 / ODPOČINEK',text:'Prosklený pavilon s lehátky a zastřešenou terasou mezi saunovými cykly.',pos:[6,7,-3],target:[0,1,-12],point:[0,3.7,-12]},
+ {name:'Herbal',tag:'03 / BYLINNÁ SAUNA',text:'Bylinná sauna se zelenými akcenty, miskou na byliny a výsadbou u vstupu.',pos:[-13,7,6],target:[-24,1,-7],point:[-24,3.5,-7]},
+ {name:'Solná',tag:'04 / SOLNÁ SAUNA',text:'Sauna s podsvícenou stěnou ze solných bloků, světlými lavicemi a klidným jantarovým světlem.',pos:[34,7,5],target:[24,1,-9],point:[24,3.5,-9]},
+ {name:'Odpočívárna',tag:'05 / ODPOČINEK',text:'Velká odpočívárna s 18 lehátky, prosklenými stěnami a širokou krytou terasou.',pos:[11,11,-12],target:[0,1,-29],point:[0,4,-29]},
  {name:'Ochlazení',tag:'06 / VODA',text:'Ochlazovací káď při centrální cestě. Odtud vedou samostatné pěšiny ke všem pavilonům.',pos:[9,4,8],target:[4.5,.5,2.7],point:[4.5,1.3,2.7]},
+ {name:'Kamenný bazének',tag:'07 / VODNÍ ZAHRADA',text:'Oválný bazének s kamenným lemem, vodou a širokým pobytovým okrajem. Druhá odpočívárna s 12 lehátky navazuje na jeho terasu.',pos:[-5,14,34],target:[-19,0,20],point:[-19,1.5,20]},
+ {name:'U vody',tag:'08 / DRUHÁ ODPOČÍVÁRNA',text:'Vzdušná pergola s 12 lehátky a výhledem na hladinu, stranou od hlavního saunového okruhu.',pos:[-20,10,38],target:[-31,1,24],point:[-31,4,24]},
  {name:'Vstup / odchod',tag:'07 / PŘÍSTUP',text:'Hlavní přístupová cesta pokračuje od centrálního rozcestí ven z areálu, volným průsekem mezi vzdálenými stromy.',pos:[12,14,30],target:[0,0,16],point:[0,1,17]}
 ]
 export default function Sauna(){
@@ -17,9 +19,9 @@ export default function Sauna(){
  useEffect(()=>{document.title='Lesní sauna · AEVUM';const el=host.current;let renderer
  try{renderer=new T.WebGLRenderer({antialias:true})}catch{setError(true);return}
  renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.setClearColor('#172823');renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.3;el.appendChild(renderer.domElement)
- const scene=new T.Scene();scene.fog=new T.FogExp2('#172823',.013)
+ const scene=new T.Scene();scene.fog=new T.FogExp2('#172823',.008)
  const camera=new T.PerspectiveCamera(43,1,.1,180);camera.position.set(...stops[0].pos)
- const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(...stops[0].target);controls.enableDamping=true;controls.minDistance=2;controls.maxDistance=65;controls.maxPolarAngle=Math.PI*.48;controls.enablePan=false;controls.enableRotate=true;controls.minAzimuthAngle=-Infinity;controls.maxAzimuthAngle=Infinity;controls.mouseButtons.LEFT=T.MOUSE.ROTATE;controls.mouseButtons.RIGHT=T.MOUSE.ROTATE;controls.touches.ONE=T.TOUCH.ROTATE
+ const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(...stops[0].target);controls.enableDamping=true;controls.minDistance=2;controls.maxDistance=110;controls.maxPolarAngle=Math.PI*.48;controls.enablePan=false;controls.enableRotate=true;controls.minAzimuthAngle=-Infinity;controls.maxAzimuthAngle=Infinity;controls.mouseButtons.LEFT=T.MOUSE.ROTATE;controls.mouseButtons.RIGHT=T.MOUSE.ROTATE;controls.touches.ONE=T.TOUCH.ROTATE
  scene.add(new T.HemisphereLight(0xdcebe1,0x443c26,2.2));const sun=new T.DirectionalLight(0xffd4a0,4);sun.position.set(-8,16,6);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-18,right:18,top:18,bottom:-18});sun.shadow.bias=-.001;scene.add(sun)
  const mat=(color,extra={})=>new T.MeshStandardMaterial({color,roughness:.8,...extra})
  const wood=mat('#c49b69'),dark=mat('#252c27'),bark=mat('#574b3a'),leaf=mat('#294b38'),ground=mat('#3d4833'),stone=mat('#66726a'),water=mat('#43776d',{metalness:.55,roughness:.17}),glass=mat('#bddbcc',{transparent:true,opacity:.16,metalness:.25,roughness:.08,depthWrite:false})
@@ -56,7 +58,7 @@ export default function Sauna(){
  };
  function mesh(g,m,x,y,z,parent=scene){const o=new T.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
  const box=(w,h,d,m,x,y,z,p)=>mesh(new T.BoxGeometry(w,h,d),m,x,y,z,p)
- mesh(new T.CylinderGeometry(60,60,.35,100),ground,0,-.4,0)
+ mesh(new T.CylinderGeometry(76,76,.35,100),ground,0,-.4,0)
  // Cabin: individual timber boards, glazed front, benches and removable roof.
  const shell=new T.Group();scene.add(shell)
  for(let i=0;i<37;i++){box(.155,.16,7,wood,-3+i*.165,0,1.2)}
@@ -100,7 +102,7 @@ export default function Sauna(){
  diffuseColor.rgb *= .75 + .23*smoothstep(-.7,.5,groove);
  `)};
  for(let i=0;i<105;i++){
-  const a=rand()*Math.PI*2,r=34+rand()*20,x=Math.cos(a)*r,z=Math.sin(a)*r,h=5+rand()*7;
+  const a=rand()*Math.PI*2,r=53+rand()*15,x=Math.cos(a)*r,z=Math.sin(a)*r,h=5+rand()*7;
   if(z>0 && Math.abs(x)<5)continue;
   mesh(new T.CylinderGeometry(.07,.23,h,12,6),bark,x,h/2-.2,z);
   const tiers=6;
@@ -149,20 +151,48 @@ export default function Sauna(){
    }
   }
  }
- pavilion(-11,-2,'herbal');pavilion(11,-2,'salt');pavilion(0,-12,'rest');
+ pavilion(-24,-7,'herbal');pavilion(24,-9,'salt');
  const gravel=mat('#a79e86');
  function path(points,width=1.35){for(let i=1;i<points.length;i++){const [x,z]=points[i-1],[nx,nz]=points[i];const length=Math.hypot(nx-x,nz-z);const strip=box(width,.06,length,gravel,(x+nx)/2,-.15,(z+nz)/2);strip.rotation.y=Math.atan2(nx-x,nz-z);mesh(new T.CylinderGeometry(width/2,width/2,.06,24),gravel,x,-.15,z);}}
- path([[0,55],[0,20],[0,8],[0,5]],2.2);
- path([[0,8],[-7,8],[-11,5],[-11,1.5]]);
- path([[0,8],[7,8],[11,5],[11,1.5]]);
- path([[-7,8],[-6,-5],[-5,-8],[0,-8],[0,-8.5]]);
- path([[7,8],[6,-5],[5,-8],[0,-8]]);
+ // Smooth paths skirt the gardens, with comfortable open lawns between buildings.
+ function curved(points,width=1.65){const curve=new T.CatmullRomCurve3(points.map(([x,z])=>new T.Vector3(x,0,z)));path(curve.getPoints(70).map(v=>[v.x,v.z]),width);}
+ curved([[0,73],[0,40],[0,20],[0,8],[0,5]],2.4);
+ curved([[0,8],[-10,9],[-22,5],[-24,-3.5]]);
+ curved([[0,8],[12,8],[24,2],[24,-5.5]]);
+ curved([[-24,-3.5],[-17,-13],[-10,-22],[0,-22.5]],2);
+ curved([[24,-5.5],[18,-17],[9,-23],[0,-22.5]],2);
+ curved([[0,20],[-7,21],[-12,25],[-19,28]],2);
+ curved([[-19,28],[-24,31],[-31,29]],2);
  path([[0,5],[4.5,5],[4.5,3.7]],1);
+ function lounger(x,z){box(1.05,.18,2.2,wood,x,.35,z);box(.95,.13,1.65,linen,x,.51,z+.13);const back=box(.95,.14,.78,linen,x,.74,z-.86);back.rotation.x=.48;for(const dz of [-.85,.85])box(.08,.3,.08,dark,x,.15,z+dz);}
+ function lounge(cx,cz,cols,rows,enclosed){
+  const w=cols*1.65+2,d=rows*3+2,roof=new T.Group();scene.add(roof);roofs.push(roof);
+  box(w,.2,d+2,wood,cx,.01,cz+1);
+  for(let i=0;i<cols;i++)for(let j=0;j<rows;j++)lounger(cx+(i-(cols-1)/2)*1.65,cz+(j-(rows-1)/2)*3);
+  for(const dx of [-w/2+.3,w/2-.3])for(const dz of [-d/2+.3,0,d/2+.3])box(.16,3.5,.16,wood,cx+dx,1.75,cz+dz);
+  if(enclosed){box(w,.2,d+2,dark,cx,3.6,cz+.5,roof);box(w,3.2,.025,glass,cx,1.7,cz-d/2,roof);for(const dx of [-w/2,w/2])box(.025,3.2,d,glass,cx+dx,1.7,cz,roof);}
+  else{for(let i=0;i<=18;i++)box(.12,.19,d+1,wood,cx-w/2+i*w/18,3.5,cz,roof);for(const dz of [-d/2,d/2])box(w,.2,.18,dark,cx,3.3,cz+dz,roof);}
+  box(w-.6,.035,.04,led,cx,3.35,cz-d/2+.1,roof);
+ }
+ lounge(0,-29,6,3,true);lounge(-31,24,4,3,false);
+ // Raised stone basin keeps the water and its enclosing wall above the lawn.
+ const poolX=-19,poolZ=20;
+ const poolWall=mesh(new T.CylinderGeometry(1,1,.65,96),stone,poolX,.05,poolZ);poolWall.scale.set(6,1,4.3);
+ const poolSurface=mesh(new T.CircleGeometry(1,128),water,poolX,.4,poolZ);poolSurface.rotation.x=-Math.PI/2;poolSurface.scale.set(5.55,3.85,1);poolSurface.castShadow=false;
+ const coping=mat('#c1b8a1');
+ for(let i=0;i<56;i++){const a=i/56*Math.PI*2;const block=box(.62,.2,.54,coping,poolX+5.82*Math.cos(a),.45,poolZ+4.08*Math.sin(a));block.rotation.y=-a;}
+ for(let i=0;i<17;i++){const a=Math.PI*.07+i/17*Math.PI*.88;const rock=mesh(new T.IcosahedronGeometry(.45+(i%3)*.17,1),stone,poolX+6.4*Math.cos(a),.28,poolZ-4.9*Math.sin(a));rock.scale.set(1.3,.8,1);}
+ for(let i=0;i<3;i++)box(2.1,.16, .6,coping,poolX,.08+i*.12,poolZ+5.5-i*.5);
+ // Low planting islands give the open space a composed garden rhythm.
+ const shrubs=new T.InstancedMesh(new T.IcosahedronGeometry(1,1),herbal,96);scene.add(shrubs);
+ const planting=new T.Object3D();let pi=0;
+ for(const [gx,gz] of [[-13,-4],[12,-5],[-12,-23],[13,-24],[-26,14],[-9,29]])for(let i=0;i<16;i++){const a=i*2.399,r=Math.sqrt(i)*.5;planting.position.set(gx+Math.cos(a)*r,.25,gz+Math.sin(a)*r);planting.scale.set(.6,.4+(i%3)*.13,.6);planting.updateMatrix();shrubs.setMatrixAt(pi++,planting.matrix);}
+ shrubs.instanceMatrix.needsUpdate=true;
  for(const x of [-1.5,1.5])for(const z of [11,17,23]){box(.1,.7,.1,dark,x,.2,z);box(.16,.08,.16,led,x,.58,z);}
  // Only typography is drawn here; all scenery remains actual 3D geometry.
  const labels=[];
  function sign(text,x,z){const canvas=document.createElement('canvas');canvas.width=512;canvas.height=96;const ctx=canvas.getContext('2d');ctx.fillStyle='#18362e';ctx.fillRect(0,0,512,96);ctx.fillStyle='#f1e5c7';ctx.font='34px Arial';ctx.textAlign='center';ctx.fillText(text,256,60);const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;labels.push(texture);const label=mesh(new T.PlaneGeometry(3.1,.58),new T.MeshBasicMaterial({map:texture,side:T.DoubleSide}),x,2.35,z);label.castShadow=false;}
- sign('FINSKÁ',0,2.06);sign('HERBAL',-11,.06);sign('SOLNÁ',11,.06);sign('ODPOČÍVÁRNA',0,-9.94);
+ sign('FINSKÁ',0,2.06);sign('HERBAL',-24,-4.94);sign('SOLNÁ',24,-6.94);sign('ODPOČÍVÁRNA · 18 MÍST',0,-22.4);sign('U VODY · 12 MÍST',-31,30);
  sign('VSTUP / ODCHOD',0,20);for(const x of [-1.4,1.4])box(.08,2.6,.08,wood,x,1.15,20);
  const markers=stops.slice(1).map((s,i)=>{const m=mesh(new T.SphereGeometry(.13,16,12),new T.MeshBasicMaterial({color:0xffdb8f}),...s.point);m.userData.index=i+1;return m})
  let destination=null;const rotate=direction=>{destination=null;const offset=camera.position.clone().sub(controls.target);offset.applyAxisAngle(new T.Vector3(0,1,0),direction*Math.PI/8);camera.position.copy(controls.target).add(offset);controls.update()};api.current={rotate,go(i){destination={pos:new T.Vector3(...stops[i].pos),target:new T.Vector3(...stops[i].target)}},cut(v){roofs.forEach(roof=>roof.visible=!v)}}
