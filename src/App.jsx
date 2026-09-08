@@ -1,6 +1,4 @@
-import React, { Suspense, lazy, useEffect, useRef, useState, useCallback } from 'react'
-
-const Vortex = lazy(() => import('./Vortex.jsx'))
+import React, { useEffect, useState, useCallback } from 'react'
 
 /* ==================================================================
    Obsah
@@ -14,6 +12,18 @@ const NAV = [
   ['Masáže', 'masaze'],
   ['Programy', 'programy'],
   ['3D sauna', '?sauna'],
+]
+
+/* rejstřík v pravém sloupci hera */
+const OBSAH = [
+  ['01', 'Filozofie', 'filozofie'],
+  ['02', 'Diagnostika', 'diagnostika'],
+  ['03', 'Regenerace', 'regenerace'],
+  ['04', 'Fyzioterapie', 'fyzioterapie'],
+  ['05', 'Masáže', 'masaze'],
+  ['06', 'Prostředí', 'prostredi'],
+  ['07', 'Den v klinice', 'den'],
+  ['08', 'Programy a ceny', 'programy'],
 ]
 
 const DIAGNOSTIKA = [
@@ -316,14 +326,13 @@ function useReveal() {
 function Mark() {
   return (
     <svg className="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
-      <circle cx="20" cy="20" r="18.5" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.55" />
+      <circle cx="20" cy="20" r="18.5" fill="none" stroke="currentColor" strokeWidth="1.3" opacity="0.5" />
       <path
         d="M20 1.5a9.25 9.25 0 0 0 0 18.5 9.25 9.25 0 0 1 0 18.5A18.5 18.5 0 0 1 20 1.5Z"
-        fill="#2ee0b0"
-        opacity="0.9"
+        fill="currentColor"
       />
-      <circle cx="20" cy="10.75" r="2.1" fill="#04070a" />
-      <circle cx="20" cy="29.25" r="2.1" fill="#2ee0b0" />
+      <circle className="mark-hole" cx="20" cy="10.75" r="2.1" />
+      <circle cx="20" cy="29.25" r="2.1" fill="currentColor" />
     </svg>
   )
 }
@@ -346,46 +355,17 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false)
   const [menu, setMenu] = useState(false)
   const [open, setOpen] = useState(0)
-  const [show3D, setShow3D] = useState(false)
-  const [count, setCount] = useState(14000)
-  const layerRef = useRef(null)
-  const idleRef = useRef(false)
 
   useReveal()
 
-  /* -- WebGL detekce, respekt k redukovanému pohybu, velikost roje -- */
-  useEffect(() => {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    let ok = false
-    try {
-      const c = document.createElement('canvas')
-      ok = !!(c.getContext('webgl2') || c.getContext('webgl'))
-    } catch (e) {
-      ok = false
-    }
-    const w = window.innerWidth
-    setCount(w < 700 ? 4500 : w < 1200 ? 9000 : 14000)
-    if (ok && !reduced) {
-      const id = window.setTimeout(() => setShow3D(true), 120)
-      return () => window.clearTimeout(id)
-    }
-  }, [])
-
-  /* -- Vortex je v hero plný, níž jen jemný podtisk -- */
+  /* -- jediný scroll listener, throttlovaný přes requestAnimationFrame -- */
   useEffect(() => {
     let raf = 0
     const onScroll = () => {
       if (raf) return
       raf = window.requestAnimationFrame(() => {
         raf = 0
-        const y = window.scrollY
-        const h = window.innerHeight
-        setScrolled(y > 40)
-        const p = Math.min(1, y / (h * 0.85))
-        idleRef.current = p > 0.9
-        if (layerRef.current) {
-          layerRef.current.style.setProperty('--vortex-opacity', (1 - p * 0.88).toFixed(3))
-        }
+        setScrolled(window.scrollY > 40)
       })
     }
     onScroll()
@@ -429,13 +409,6 @@ export default function App() {
 
   return (
     <>
-      <div className="vortex-layer" ref={layerRef} aria-hidden="true">
-        {show3D && (
-          <Suspense fallback={null}>
-            <Vortex count={count} bloom={count > 6000 ? 1.7 : 1.25} idleRef={idleRef} />
-          </Suspense>
-        )}
-      </div>
       <div className="grain" aria-hidden="true" />
 
       {/* ---------------- Navigace ---------------- */}
@@ -480,69 +453,80 @@ export default function App() {
       <main className="page" id="top">
         {/* ---------------- Hero ---------------- */}
         <section className="hero">
-          <span className="hero-badge">
-            <i className="dot" />
-            Otevíráme 2027 · Česká republika
-          </span>
-          <h1>AEVUM</h1>
-          <p className="hero-sub">Klinika dlouhověkosti</p>
-          <p className="hero-lead">
-            Nejmodernější diagnostika a regenerační technologie uprostřed lesa. Měříme, co se dá
-            změřit — a zbytek necháváme na tichu, vodě a pohybu.
-          </p>
-          <div className="btn-row">
-            <a href="#kontakt" className="btn btn-primary" onClick={(e) => go(e, 'kontakt')}>
-              Nezávazná poptávka
-            </a>
-            <a href="#programy" className="btn" onClick={(e) => go(e, 'programy')}>
-              Prohlédnout programy
-            </a>
-          </div>
+          <div className="wrap">
+            <div className="hero-grid">
+              <div>
+                <span className="hero-badge">
+                  <i className="dot" />
+                  Otevíráme 2027 · Česká republika
+                </span>
+                <h1>AEVUM</h1>
+                <p className="hero-sub">Klinika dlouhověkosti</p>
+                <div className="hero-rule" />
+                <p className="hero-lead">
+                  Nejmodernější diagnostika a regenerační technologie uprostřed lesa. Měříme, co se
+                  dá změřit — a zbytek necháváme na tichu, vodě a pohybu.
+                </p>
+                <div className="btn-row">
+                  <a href="#kontakt" className="btn btn-primary" onClick={(e) => go(e, 'kontakt')}>
+                    Nezávazná poptávka
+                  </a>
+                  <a href="#programy" className="btn" onClick={(e) => go(e, 'programy')}>
+                    Prohlédnout programy
+                  </a>
+                </div>
+              </div>
 
-          <div className="hero-stats">
-            <div>
-              <b>80+</b>
-              <span>Biomarkerů</span>
+              <nav className="hero-index" aria-label="Obsah stránky">
+                <span>Obsah</span>
+                {OBSAH.map(([n, label, id]) => (
+                  <a key={id} href={`#${id}`} onClick={(e) => go(e, id)}>
+                    <i>{n}</i>
+                    {label}
+                  </a>
+                ))}
+              </nav>
             </div>
-            <div>
-              <b>3 000 m²</b>
-              <span>Diagnostika a regenerace</span>
-            </div>
-            <div>
-              <b>12 ha</b>
-              <span>Vlastního lesa</span>
-            </div>
-            <div>
-              <b>1 : 1</b>
-              <span>Lékař na klienta</span>
+
+            <div className="hero-stats">
+              <div>
+                <b>80+</b>
+                <span>Biomarkerů</span>
+              </div>
+              <div>
+                <b>3 000 m²</b>
+                <span>Diagnostika a regenerace</span>
+              </div>
+              <div>
+                <b>12 ha</b>
+                <span>Vlastního lesa</span>
+              </div>
+              <div>
+                <b>1 : 1</b>
+                <span>Lékař na klienta</span>
+              </div>
             </div>
           </div>
-
-          <span className="scroll-hint">
-            <i />
-            Rovnováha
-          </span>
         </section>
 
         {/* ---------------- Filozofie ---------------- */}
         <section id="filozofie">
           <div className="wrap">
             <div className="section-head reveal">
-              <span className="eyebrow">Filozofie</span>
-              <h2>
-                Dvě síly, které se navzájem
-                <br />
-                nevylučují — potřebují se.
-              </h2>
+              <div>
+                <span className="eyebrow">Filozofie</span>
+                <h2>Dvě síly, které se navzájem nevylučují — potřebují se.</h2>
+              </div>
               <p className="lead">
                 Longevity medicína se dnes rozpadá do dvou táborů. Jeden věří jen číslům, druhý jen
-                přírodě. AEVUM stojí na tom, že bez sebe nefungují: technologie ukáže, co se děje,
-                a příroda dá tělu prostor to skutečně zvládnout.
+                přírodě. AEVUM stojí na tom, že bez sebe nefungují: technologie ukáže, co se děje, a
+                příroda dá tělu prostor to skutečně zvládnout.
               </p>
             </div>
 
             <div className="balance reveal">
               <div className="yang">
+                <span className="bal-tag">Jang · měřitelné</span>
                 <h3>Technologie</h3>
                 <p>
                   Přesná data místo dohadů. Zobrazovací metody, laboratoř, zátěžová fyziologie a
@@ -556,6 +540,7 @@ export default function App() {
                 </ul>
               </div>
               <div className="yin">
+                <span className="bal-tag">Jin · nezměřitelné</span>
                 <h3>Příroda</h3>
                 <p>
                   Regenerace se neděje na vyšetřovně. Děje se v lese, ve vodě, v teple, v chladu a
@@ -573,11 +558,13 @@ export default function App() {
         </section>
 
         {/* ---------------- Diagnostika ---------------- */}
-        <section id="diagnostika" className="solid">
+        <section id="diagnostika" className="tone-2">
           <div className="wrap">
             <div className="section-head reveal">
-              <span className="eyebrow">Diagnostika</span>
-              <h2>Nejdřív vědět. Teprve potom zasahovat.</h2>
+              <div>
+                <span className="eyebrow">Diagnostika</span>
+                <h2>Nejdřív vědět. Teprve potom zasahovat.</h2>
+              </div>
               <p className="lead">
                 Vstupní den vám dá obraz, jaký běžná preventivní prohlídka nedá. Ne proto, abyste
                 sbírali čísla, ale proto, abychom věděli, kde se vyplatí zabrat.
@@ -601,8 +588,10 @@ export default function App() {
         <section id="regenerace">
           <div className="wrap">
             <div className="section-head reveal">
-              <span className="eyebrow">Regenerace a revitalizace</span>
-              <h2>Technologie, které tělu vrátí kapacitu.</h2>
+              <div>
+                <span className="eyebrow">Regenerace a revitalizace</span>
+                <h2>Technologie, které tělu vrátí kapacitu.</h2>
+              </div>
               <p className="lead">
                 Vybavení, které jinde najdete rozeseté po pěti různých pracovištích, tady máte na
                 jedné chodbě. Terapie se neskládají náhodně — vždycky navazují na vaše výsledky.
@@ -623,11 +612,13 @@ export default function App() {
         </section>
 
         {/* ---------------- Fyzioterapie ---------------- */}
-        <section id="fyzioterapie" className="solid">
+        <section id="fyzioterapie" className="tone-2">
           <div className="wrap split">
-            <div className="section-head reveal" style={{ marginBottom: 0 }}>
-              <span className="eyebrow">Fyzioterapie a pohyb</span>
-              <h2>Síla je nejlepší pojistka na dalších třicet let.</h2>
+            <div className="section-head reveal">
+              <div>
+                <span className="eyebrow">Fyzioterapie a pohyb</span>
+                <h2>Síla je nejlepší pojistka na dalších třicet let.</h2>
+              </div>
               <p className="lead">
                 Ze všech věcí, které dokážete ovlivnit, mají svalová hmota a aerobní kapacita
                 nejsilnější vazbu na to, jak budete fungovat v osmdesáti. Proto tady fyzio není
@@ -652,9 +643,11 @@ export default function App() {
         {/* ---------------- Masáže ---------------- */}
         <section id="masaze">
           <div className="wrap split">
-            <div className="section-head reveal" style={{ marginBottom: 0 }}>
-              <span className="eyebrow">Masáže a bodywork</span>
-              <h2>Ruce, které vědí, co hledají.</h2>
+            <div className="section-head reveal">
+              <div>
+                <span className="eyebrow">Masáže a bodywork</span>
+                <h2>Ruce, které vědí, co hledají.</h2>
+              </div>
               <p className="lead">
                 Naši terapeuti vidí vaše výsledky dřív, než na vás sáhnou. Masáž tady není položka
                 z ceníku hotelu — je to terapeutický zásah navázaný na to, co ukázalo tělo i data.
@@ -676,11 +669,13 @@ export default function App() {
         </section>
 
         {/* ---------------- Prostředí ---------------- */}
-        <section id="prostredi">
+        <section id="prostredi" className="tone-2">
           <div className="wrap">
             <div className="section-head reveal">
-              <span className="eyebrow">Prostředí</span>
-              <h2>Klinika, ze které se nechce odjíždět.</h2>
+              <div>
+                <span className="eyebrow">Prostředí</span>
+                <h2>Klinika, ze které se nechce odjíždět.</h2>
+              </div>
               <p className="lead">
                 Prostředí je terapeutický nástroj. Proto tu není recepce s neonem a chodby s
                 kobercem, ale dřevo, sklo, voda a les hned za oknem.
@@ -699,11 +694,13 @@ export default function App() {
         </section>
 
         {/* ---------------- Den v Aevum ---------------- */}
-        <section id="den" className="solid-hard">
-          <div className="wrap split">
-            <div className="section-head reveal" style={{ marginBottom: 0 }}>
-              <span className="eyebrow">Váš den</span>
-              <h2>Jak to probíhá.</h2>
+        <section id="den" className="dark">
+          <div className="wrap">
+            <div className="section-head reveal">
+              <div>
+                <span className="eyebrow">Váš den</span>
+                <h2>Jak to probíhá.</h2>
+              </div>
               <p className="lead">
                 Modelový průběh diagnosticko-regeneračního dne. Skutečný plán vždycky sestavujeme
                 podle toho, proč přijíždíte a co ukážou ranní odběry.
@@ -725,8 +722,10 @@ export default function App() {
         <section id="programy">
           <div className="wrap">
             <div className="section-head reveal">
-              <span className="eyebrow">Programy</span>
-              <h2>Tři způsoby, jak začít.</h2>
+              <div>
+                <span className="eyebrow">Programy</span>
+                <h2>Tři způsoby, jak začít.</h2>
+              </div>
               <p className="lead">
                 Můžete přijet na jeden den a zjistit, jak na tom jste. Nebo si nás nechat na celý
                 rok. Přechod mezi programy je kdykoli možný a už zaplacené vyšetření se započítává.
@@ -736,7 +735,12 @@ export default function App() {
             <div className="plans reveal">
               {PROGRAMY.map((p) => (
                 <div className={p.featured ? 'plan featured' : 'plan'} key={p.n}>
-                  {p.featured && <span className="plan-flag">Nejčastější volba</span>}
+                  <span
+                    className={p.featured ? 'plan-flag' : 'plan-flag ghost'}
+                    aria-hidden={p.featured ? undefined : true}
+                  >
+                    Nejčastější volba
+                  </span>
                   <h3>{p.n}</h3>
                   <div className="plan-len">{p.len}</div>
                   <div className="plan-price">
@@ -768,11 +772,17 @@ export default function App() {
         </section>
 
         {/* ---------------- FAQ ---------------- */}
-        <section id="faq" className="solid">
+        <section id="faq" className="tone-2">
           <div className="wrap">
             <div className="section-head reveal">
-              <span className="eyebrow">Časté dotazy</span>
-              <h2>Než se zeptáte.</h2>
+              <div>
+                <span className="eyebrow">Časté dotazy</span>
+                <h2>Než se zeptáte.</h2>
+              </div>
+              <p className="lead">
+                Co se nás lidé ptají nejčastěji. Když tu odpověď nenajdete, napište nám — ozveme se
+                do dvou pracovních dnů.
+              </p>
             </div>
             <div className="faq reveal">
               {FAQ.map(([q, a], i) => (
@@ -860,6 +870,7 @@ export default function App() {
 
       {/* ---------------- Patička ---------------- */}
       <footer>
+        <div className="foot-inner">
         <div className="foot-top">
           <a href="#top" className="brand" onClick={(e) => go(e, 'top')}>
             <Mark />
@@ -889,6 +900,7 @@ export default function App() {
         <div className="foot-bottom">
           <span>© {new Date().getFullYear()} AEVUM. Všechna práva vyhrazena.</span>
           <span>Rovnováha měřitelného a nezměřitelného.</span>
+        </div>
         </div>
       </footer>
     </>

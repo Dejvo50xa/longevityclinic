@@ -15,14 +15,22 @@ prostředím: wellness, fyzioterapie, masáže, kompletní revitalizace.
 
 - **Repo:** `github.com/Dejvo50xa/longevityclinic`, větev `main`
 - **Deploy:** push do `main` → Vercel nasadí automaticky
-- **Doména:** `longevityclinic.vercel.app`
+- **Doména:** `longevityclinic-one.vercel.app`
 - **Majitel:** David (GitHub `Dejvo50xa`). Píše česky, mluv na něj česky.
 
-Vizuální podpis je **yin-yang vortex** — dvě protilehlé spirály částic, které do
-sebe plynule přecházejí. Jang (světlá, teplá slonovina) = technologie a měření.
-Jin (hluboká zelenomodrá) = příroda a regenerace. Celá myšlenka webu je, že se
-tyhle dvě věci nevylučují, ale potřebují. Neruš tuhle metaforu — je to jediná
-věc, která web odlišuje od stovky jiných klinik.
+Vizuální podpis je **kontrast měřitelného a nezměřitelného** — jang (světlá
+plocha, technologie a data) proti jin (tmavá plocha, příroda a regenerace).
+V sekci Filozofie stojí obě poloviny doslova vedle sebe: světlý panel
+„Technologie" a tmavý panel „Příroda". Značka je stylizovaný jin-jang.
+Tuhle metaforu neruš — je to jediná věc, která web odlišuje od stovky jiných
+klinik. **Nese ji ale typografie a plochy, ne 3D grafika.**
+
+> **Historie (září 2026):** dřív byl na pozadí celého webu animovaný 3D „vortex" —
+> dvě protilehlé spirály částic v three.js s bloomem. David ho nechal odstranit
+> (svítící objekt na pozadí zhoršoval čitelnost a přidával ~500 kB do bundlu).
+> Web je teď **světlý, statický, bez WebGL v hlavní stránce**. Soubor
+> `src/Vortex.jsx` zůstal v repu jako archiv, ale **nikde se neimportuje** —
+> nevracej ho zpátky bez výslovného pokynu.
 
 ---
 
@@ -32,9 +40,9 @@ věc, která web odlišuje od stovky jiných klinik.
 |---|---|
 | Build | Vite 5 |
 | UI | React 18 (ne 19) |
-| 3D | three.js `^0.169.0`, **raw**, bez `@react-three/fiber` a bez `drei` |
+| 3D | three.js `^0.169.0`, **raw** — používá se **jen** ve stránce `?sauna` |
 | Styly | Čisté CSS v jednom souboru, **žádný Tailwind, žádná UI knihovna** |
-| Routing | Žádný — jednostránkový web s kotvami |
+| Routing | Žádný — jednostránkový web s kotvami + `?sauna` v `main.jsx` |
 | Backend | Žádný — formulář otevírá `mailto:` |
 
 **Nepřidávej závislosti.** Aktuální `package.json` má tři runtime balíčky
@@ -42,6 +50,11 @@ věc, která web odlišuje od stovky jiných klinik.
 Tenhle stav je záměrný — dřívější verze na r3f + drei se rozbíjela na
 verzích. Jestli si myslíš, že knihovnu potřebuješ, napiš proč a nech
 rozhodnutí na Davidovi; nepřidávej ji rovnou.
+
+**Hlavní stránka nesmí sáhnout na three.js.** `Sauna.jsx` je jediný soubor,
+který ho importuje, a je lazy-loadovaný v `main.jsx` jen při `?sauna`. Díky tomu
+je hlavní bundle ~170 kB (55 kB gzip) a chunk s three.js se stáhne jen tomu,
+kdo si otevře 3D saunu. Zachovej to.
 
 **Nepoužívej `localStorage` ani `sessionStorage`.** Nejsou potřeba a v náhledech
 se chovají nespolehlivě.
@@ -54,10 +67,12 @@ se chovají nespolehlivě.
 index.html          129 ř.  meta, Open Graph, JSON-LD, Google Fonts, #root
 vite.config.js        7 ř.  plugin-react, chunkSizeWarningLimit
 package.json                3 runtime + 2 dev závislosti
-src/main.jsx          9 ř.  createRoot, import index.css
-src/App.jsx         894 ř.  VEŠKERÝ obsah a všechny sekce
-src/Vortex.jsx      228 ř.  3D vortex, raw three.js
-src/index.css      1238 ř.  design systém, komponentní třídy, responzivita
+src/main.jsx         11 ř.  createRoot, přepínač ?sauna, import index.css
+src/App.jsx         ~900 ř. VEŠKERÝ obsah a všechny sekce hlavní stránky
+src/index.css      ~1180 ř. světlý design systém, komponentní třídy, responzivita
+src/Sauna.jsx       239 ř.  3D areál lesní sauny (three.js), route ?sauna
+src/sauna.css        35 ř.  styly overlaye pro 3D saunu
+src/Vortex.jsx      228 ř.  ARCHIV — starý 3D vortex, nikde se neimportuje
 public/favicon.svg          yin-yang značka
 public/og.png               1200×630 náhled pro sociální sítě
 public/robots.txt
@@ -69,23 +84,25 @@ public/sitemap.xml
 Nahoře jsou **datová pole**, pak pomocné komponenty, pak jedna velká
 `export default function App()`. Obsah se needituje v JSX, ale v těch polích:
 
-| Pole | Řádek | Tvar | Kam se renderuje |
-|---|---|---|---|
-| `NAV` | 9 | `[label, id]` | navigace + patička |
-| `DIAGNOSTIKA` | 18 | `{t, d, tag}` | karty, `grid-4` |
-| `REGENERACE` | 61 | `{t, d, tag}` | karty, `grid-3` |
-| `FYZIO` | 109 | `{t, d, m}` | řádky `.row` |
-| `MASAZE` | 142 | `{t, d, m}` | řádky `.row` |
-| `PROSTREDI` | 175 | `{t, d}` | `.env-card` |
-| `DEN` | 202 | `[čas, název, popis]` | timeline |
-| `PROGRAMY` | 214 | `{n, len, price, per, items[], featured?}` | ceník |
-| `FAQ` | 262 | `[otázka, odpověď]` | akordeon |
+| Pole | Tvar | Kam se renderuje |
+|---|---|---|
+| `NAV` | `[label, id]` | navigace + patička |
+| `OBSAH` | `[číslo, label, id]` | rejstřík v pravém sloupci hera |
+| `DIAGNOSTIKA` | `{t, d, tag}` | karty, `grid-4` |
+| `REGENERACE` | `{t, d, tag}` | karty, `grid-3` |
+| `FYZIO` | `{t, d, m}` | řádky `.row` |
+| `MASAZE` | `{t, d, m}` | řádky `.row` |
+| `PROSTREDI` | `{t, d}` | `.env-card` |
+| `DEN` | `[čas, název, popis]` | `.timeline` (tmavá sekce) |
+| `PROGRAMY` | `{n, len, price, per, items[], featured?}` | ceník |
+| `FAQ` | `[otázka, odpověď]` | akordeon |
 
 `t` = titulek, `d` = popis, `tag` = štítek na kartě, `m` = meta vpravo v řádku.
 
 **Přidat službu = přidat objekt do pole.** Nesahej kvůli tomu do JSX.
 Když přidáš položku do `FAQ`, přidej ji **taky do JSON-LD `FAQPage`**
 v `index.html` — jinak se strukturovaná data rozejdou s obsahem.
+Když přidáš sekci, přidej ji i do `OBSAH`, ať sedí rejstřík v heru.
 
 Sekce (`id` pro kotvy, v tomhle pořadí):
 `filozofie` · `diagnostika` · `regenerace` · `fyzioterapie` · `masaze` ·
@@ -98,92 +115,78 @@ Sekce (`id` pro kotvy, v tomhle pořadí):
 | `scrolled` | přepíná `.nav.scrolled` po 40 px |
 | `menu` | mobilní menu, zamyká `body` scroll |
 | `open` | otevřená položka FAQ (index, `-1` = zavřeno) |
-| `show3D` | vortex se mountne jen s WebGL a bez `prefers-reduced-motion` |
-| `count` | částic podle šířky okna: `<700` → 4500, `<1200` → 9000, jinak 14000 |
-| `layerRef` | scroll handler mu nastavuje `--vortex-opacity` |
-| `idleRef` | `true` po odscrollování z hera → vortex jede na půl snímků |
 
-Scroll handler je jeden, throttlovaný přes `requestAnimationFrame`, listener je
-`{ passive: true }`. Nepřidávej další scroll listenery — rozšiř tenhle.
+Scroll handler je **jeden**, throttlovaný přes `requestAnimationFrame`, listener
+je `{ passive: true }`. Nepřidávej další scroll listenery — rozšiř tenhle.
+`useReveal()` je `IntersectionObserver`, který přidává `.visible` třídám `.reveal`.
 
 ---
 
-## 4. `src/Vortex.jsx` — nesahat bez čtení
+## 4. `src/Sauna.jsx` — 3D sauna na `?sauna`
 
-Celý 3D běh je v jednom `useEffect` s poctivým cleanupem. Matematika spirály je
-převzatá z původního prototypu a je **záměrně** taková, jaká je:
+Samostatná stránka mimo hlavní web, dostupná přes `?sauna` (odkaz je v NAV jako
+„3D sauna"). Celý 3D běh je v jednom `useEffect` s poctivým cleanupem:
+OrbitControls, procedurální shader na dřevo a vodu, stínové mapy, devět
+předdefinovaných pohledů v poli `stops`. Má vlastní `sauna.css`, které si resetuje
+styly zděděné z hlavního webu.
 
-```
-r      = RADIUS * sqrt(u)
-spiral = GOLDEN*local + side*TWIST*sqrt(u) + side*t*FLOW
-x      = side * r * cos(spiral) * (1-u)
-y      = HEIGHT * (0.5-u) * sin(spiral*0.5 + t)
-z      =        r * sin(spiral) * (1-u)
-```
-
-Konstanty nahoře souboru: `RADIUS 70`, `TWIST 5`, `FLOW 1.3`, `HEIGHT 40`.
-Ladit se dají, ale drž `TWIST` mezi 3 a 8 — mimo to se yin-yang rozpadne na
-kouli nebo na disk.
-
-### Optimalizace, které nesmíš rozbít
-
-Tohle je rozdíl mezi plynulým webem a topícím se notebookem:
-
-1. **Barvy se počítají jen jednou** při startu (`setColorAt` v init smyčce).
-   Barva závisí čistě na `u` a `side`, obojí je na částici konstantní.
-   Nikdy nevolej `setColorAt` v render smyčce.
-2. **Matice se nesestavuje.** V každém snímku se přepisují jen indexy
-   `12`, `13`, `14` v `mesh.instanceMatrix.array` (translace). Zbytek matice
-   je jednotkový a nastaví se jednou. Nepoužívej `Object3D` + `updateMatrix()`.
-3. **Konstanty na částici** jsou předpočítané v `Float32Array`
-   (`side`, `uArr`, `rArr`, `base`, `blend`). Ve smyčce zbyde jen trigonometrie.
-4. **Půlka snímků mimo hero** — `idleRef.current` přeskakuje každý druhý snímek.
-5. **Pauza na skryté záložce** přes `visibilitychange`.
-6. **DPR strop 1.6**, `antialias: false`.
-
-Postprocessing: `EffectComposer` → `RenderPass` → `UnrealBloomPass` → `OutputPass`,
-importované z `three/examples/jsm/postprocessing/*`. Renderer je **neprůhledný**
-s `clearColor` `#04070a` — schválně, průhledné plátno pod bloomem dělalo artefakty.
-Barva plátna je totožná s `--bg`, takže při ztlumení vrstvy není vidět šev.
-
-Vortex je lazy-loaded (`React.lazy`) — drží hlavní bundle malý. Zachovej to.
+Když na ní pracuješ: drž ji lazy-loadovanou, ať se three.js nedostane do hlavního
+bundlu, a nezaváděj nové závislosti (viz sekce 2).
 
 ---
 
 ## 5. Design systém (`src/index.css`)
 
+Web je od září 2026 **světlý**. Základ je papírová plocha, akcent hluboká zeleň,
+tmavé jsou jen tři místa: panel „Příroda" ve Filozofii, sekce **Den v klinice**
+a patička (+ zvýrazněný program v ceníku).
+
 ### Tokeny
 
 ```css
---bg: #04070a        --ivory: #ece8e0      --accent: #2ee0b0
---bg-2: #070c11      --ivory-dim: #b9b5ac  --accent-deep: #0e7a64
---bg-3: #0b1116      --muted: #7f8a86      --gold: #c9ab72
---line: rgba(236,232,224,.10)   --line-soft: rgba(236,232,224,.05)
---serif: 'Cormorant Garamond'   --sans: 'Inter'
---maxw: 1180px       --pad: clamp(1.25rem, 5vw, 3.5rem)
+/* plochy */          --paper: #f7f5f0   --paper-2: #efece4   --paper-3: #e7e3d9
+/* tmavé bloky */     --ink: #0f1a16     --ink-2: #142019     --ink-3: #0a120f
+/* text na papíře */  --text: #26332e    --text-dim: #5a6863  --muted: #8b948f
+/* text na tmavém */  --on-dark: #ece9e1 --on-dark-dim: #a6b0ab --on-dark-muted: #74807b
+/* akcenty */         --accent: #17624c  --accent-hi: #1e8264 --accent-light: #4fbf9c
+                      --sand: #a8834f
+/* linky */           --line / --line-soft (na papíře)
+                      --line-dark / --line-dark-soft (na tmavém)
+/* typografie */      --serif: 'Cormorant Garamond'   --sans: 'Inter'
+/* rozměry */         --maxw: 1220px   --pad: clamp(1.25rem, 5vw, 4rem)
+                      --sec-y: clamp(4.5rem, 8vw, 7.5rem)   --r: 3px
 ```
 
-**Používej proměnné, nepiš hex napřímo.** Kdyby David chtěl vortex zpátky do
-původní modré, mění se `--accent` v CSS a hodnoty `setHSL` ve `Vortex.jsx`
-(jin je teď `0.45` odstín; původní modrá byla `0.62`).
+**Používej proměnné, nepiš hex napřímo.** `--accent-light` je verze zeleně pro
+tmavé podklady — na papíře je moc světlá, na `--ink` je naopak `--accent` moc
+tmavá. Vždycky ber akcent ze stejné sady jako podklad.
 
 ### Konvence
 
-- Nadpisy `h1`–`h3` serifem, tenkým řezem, těsným prokladem. Text sansem 300.
+- Nadpisy `h1`–`h3` serifem, tenkým řezem, těsným prokladem. Text sansem 400.
 - `.eyebrow` = zelený nadtitulek s čárkou před textem, otvírá každou sekci.
-- `.section-head` obaluje eyebrow + `h2` + `.lead`.
-- `.wrap` = max šířka 1180 px na střed. Každá sekce má `.wrap` uvnitř.
-- `.solid` / `.solid-hard` = neprůhledné pozadí sekce, aby text nad vortexem
-  zůstal čitelný. Sekce **bez** téhle třídy propouští vortex — používej střídavě,
-  ať se to nezmění na 3D pozadí přes celý web (David to výslovně nechtěl).
+- `.section-head` je **dvousloupcový**: vlevo `eyebrow` + `h2` (zabalené v `div`),
+  vpravo `.lead`. Pod 900 px se skládá pod sebe. Když přidáváš sekci, drž tenhle
+  tvar — jinak zůstane vpravo díra, kvůli které se web předělával.
+- `.wrap` = max šířka 1220 px na střed. Každá sekce má `.wrap` uvnitř.
+- **Střídání ploch:** sekce bez třídy = `--paper`, `.tone-2` = `--paper-2`,
+  `.dark` = tmavá inverze (`--ink`). Rytmus je paper → tone-2 → paper → …,
+  jediná `.dark` sekce je `den`. Nedělej dvě tmavé sekce za sebou.
+- `.split` = sticky sloupec s nadpisem vlevo + `.rows` vpravo (fyzio, masáže).
 - `.reveal` = fade-in při scrollu přes `IntersectionObserver`. Přidej ji každému
   novému bloku, jinak vypadne z rytmu stránky.
-- Karty a mřížky: `.grid.grid-4` / `.grid-3` / `.grid-2` + `.card`. Mřížka drží
-  hairline oddělovače přes `gap: 1px` na pozadí `--line-soft` — nepřepisuj `gap`.
+- Karty a mřížky: `.grid.grid-4` / `.grid-3` / `.grid-2` + `.card`, dál `.env`,
+  `.timeline` a `.plans`. Všechny drží hairline oddělovače přes `gap: 1px` na
+  pozadí `--line` (na tmavém `--line-dark`) — **nepřepisuj `gap`**.
+- Karta má stejné pozadí jako sekce, ve které stojí (`.tone-2 .card` atd.);
+  odděluje je jen vlásová linka. Na hover jde o stupeň světleji.
 
 ### Responzivita
 
-Breakpointy `1000px`, `860px` (schová `.nav-links`, ukáže `.burger`), `560px`.
+Breakpointy `1100px` (grid-4 → 2 sloupce, hero a split se skládají),
+`900px` (section-head, grid-3, env, timeline, plans → 2 sloupce),
+`860px` (schová `.nav-links`, ukáže `.burger`), `720px` (všechno na 1 sloupec,
+skryje se `.hero-index`), `480px` (tlačítka na plnou šířku).
 Nový blok vždycky zkontroluj na 375 px šířky. Existuje blok
 `@media (prefers-reduced-motion: reduce)` — nové animace do něj dopiš.
 
@@ -212,10 +215,11 @@ Nový blok vždycky zkontroluj na 375 px šířky. Existuje blok
 
 ## 7. Když měníš meta / SEO
 
-Kanonická URL `https://longevityclinic.vercel.app/` je na **šesti místech**
+Kanonická URL `https://longevityclinic-one.vercel.app/` je na **šesti místech**
 v `index.html` plus v `public/sitemap.xml` a `public/robots.txt`. Při změně
 domény projeď všechna. V `index.html` jsou dva bloky JSON-LD:
 `MedicalClinic` (služby) a `FAQPage` (musí odpovídat poli `FAQ` v `App.jsx`).
+`<meta name="theme-color">` je `#f7f5f0` — při změně `--paper` ho sjednoť.
 
 ---
 
@@ -226,11 +230,11 @@ odbuilduje (`npx vite build`) a pushne na `main`. Aby to prošlo:
 
 1. **Odevzdávej celé soubory, ne diffy.** Žádné `// ...zbytek beze změny`,
    žádné patche, žádné úryvky. Kompletní obsah souboru od prvního po poslední
-   řádek. `App.jsx` má 894 řádků a `index.css` 1238 — ano, i tak celé.
+   řádek. `App.jsx` má ~900 řádků a `index.css` ~1180 — ano, i tak celé.
 2. **Jeden soubor = jeden artefakt / jeden code block.** Nemíchej dva soubory
    do jednoho bloku.
 3. **Pojmenuj soubor přesnou cestou z repa**, ať je jasné, kam patří:
-   `src/App.jsx`, `src/index.css`, `index.html`, `src/Vortex.jsx`.
+   `src/App.jsx`, `src/index.css`, `index.html`, `src/Sauna.jsx`.
    Když je to artefakt, dej cestu do titulku.
 4. **Nepřejmenovávej soubory** a nezaváděj nové adresáře.
 5. **Když měníš `package.json`**, napiš to výslovně a odůvodni každou novou
@@ -246,7 +250,7 @@ odbuilduje (`npx vite build`) a pushne na `main`. Aby to prošlo:
 ```
 ## Změny
 - src/App.jsx — přidána sekce „Tým" mezi Prostředí a Den, nové pole TYM
-- src/index.css — třídy .team, .team-card + breakpoint 860 px
+- src/index.css — třídy .team, .team-card + breakpoint 900 px
 
 ## Zkontrolovat
 - JSON-LD ve index.html jsem nesahal, FAQ beze změny
@@ -263,13 +267,15 @@ Projdi ho po sobě, ať build neshoří na hlouposti:
 - [ ] JSX má vyvážené závorky a tagy; žádný `class=` místo `className=`
 - [ ] Každý `.map()` má `key`
 - [ ] Žádná nová závislost (nebo je zdůvodněná)
+- [ ] Hlavní stránka neimportuje `three` ani `Vortex.jsx`
 - [ ] Nové bloky mají `.reveal` a používají CSS proměnné
-- [ ] Nová sekce má `id`, `.wrap` uvnitř a je v `NAV`, pokud patří do menu
+- [ ] Nová sekce má `id`, `.wrap` uvnitř, dvousloupcový `.section-head`
+      a je v `NAV` / `OBSAH`, pokud tam patří
+- [ ] Střídání ploch sedí (paper → tone-2 → paper), žádné dvě tmavé za sebou
 - [ ] Ověřeno na 375 px
 - [ ] Disclaimer v patičce a `Otevíráme 2027` v heru pořád na místě
 - [ ] Žádné vymyšlené lékařské tvrzení, jméno ani certifikace
 - [ ] Diakritika jako skutečné znaky, UTF-8
-- [ ] Optimalizace ve `Vortex.jsx` z bodu 4 jsou netknuté
 
 ---
 
@@ -278,8 +284,10 @@ Projdi ho po sobě, ať build neshoří na hlouposti:
 Nápady, ne úkoly — David rozhodne:
 
 - skutečný název, doména, kontakty a ceny místo placeholderů
-- sekce o týmu a o vybavení s fotkami (`public/`, `loading="lazy"`)
+- fotky prostředí — světlý layout je na ně stavěný (`public/`, `loading="lazy"`);
+  hero i sekce Prostředí unesou velkou fotografii bez přestavby
+- sekce o týmu a o vybavení
 - formulář na skutečný backend (Formspree / Vercel funkce) místo `mailto:`
 - anglická mutace pro zahraniční klienty
-- `og.png` z reálné fotky prostředí, až bude
-- drobná jemná verze vortexu i v sekci Prostředí, aby se metafora vrátila níž
+- `og.png` z reálné fotky prostředí, až bude — současný je z tmavé verze webu
+  a barevně už neodpovídá
