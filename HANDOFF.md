@@ -70,7 +70,7 @@ package.json                3 runtime + 2 dev závislosti
 src/main.jsx         11 ř.  createRoot, přepínač ?sauna, import index.css
 src/App.jsx         ~900 ř. VEŠKERÝ obsah a všechny sekce hlavní stránky
 src/index.css      ~1180 ř. světlý design systém, komponentní třídy, responzivita
-src/Sauna.jsx       239 ř.  3D areál lesní sauny (three.js), route ?sauna
+src/Sauna.jsx       528 ř.  3D areál lesní sauny (three.js), route ?sauna
 src/sauna.css        35 ř.  styly overlaye pro 3D saunu
 src/Vortex.jsx      228 ř.  ARCHIV — starý 3D vortex, nikde se neimportuje
 public/favicon.svg          yin-yang značka
@@ -126,9 +126,26 @@ je `{ passive: true }`. Nepřidávej další scroll listenery — rozšiř tenhl
 
 Samostatná stránka mimo hlavní web, dostupná přes `?sauna` (odkaz je v NAV jako
 „3D sauna"). Celý 3D běh je v jednom `useEffect` s poctivým cleanupem:
-OrbitControls, procedurální shader na dřevo a vodu, stínové mapy, devět
-předdefinovaných pohledů v poli `stops`. Má vlastní `sauna.css`, které si resetuje
-styly zděděné z hlavního webu.
+OrbitControls, deset předdefinovaných pohledů v poli `stops`. Má vlastní
+`sauna.css`, které si resetuje styly zděděné z hlavního webu.
+
+Jak je scéna postavená (vše jen z balíčku `three` a jeho `examples/jsm`):
+
+- **Světlo a atmosféra:** fyzikální obloha `Sky` s mraky ve vlastní scéně, z ní
+  PMREM jako `scene.environment`, nízké odpolední slunce, `FogExp2`.
+  Stíny sledují oblast v záběru a přepočítávají se jen při jejím posunu.
+- **Materiály:** `patch()` vkládá GLSL do `MeshStandardMaterial` — dřevo (kresba
+  podle delší osy prkna, suky), kámen s mechem, štěrk, voda, šindel, rozchozená
+  tráva u cest. Žádné obrázkové textury.
+- **Výkon:** po stavbě `bake()` sloučí statické meshe podle materiálu a rodiče
+  (skupiny v `roofs` zůstávají kvůli řezu). Vegetace je celá `InstancedMesh`
+  a místo pro ni určuje shora vyrenderovaná maska obsazenosti.
+- **Post-processing:** `EffectComposer` — obloha, scéna, `GTAOPass` v poloviční
+  velikosti, `OutputPass`. Na telefonech (`low`) je GTAO vypnuté a vegetace řidší.
+
+Nové objekty přidávej přes `box()` / `cyl()` / `mesh()` před voláním `bake()`.
+Co visí na stěně nebo střeše sauny, patří do její skupiny v `roofs`, jinak
+v řezu zůstane viset ve vzduchu.
 
 Když na ní pracuješ: drž ji lazy-loadovanou, ať se three.js nedostane do hlavního
 bundlu, a nezaváděj nové závislosti (viz sekce 2).
