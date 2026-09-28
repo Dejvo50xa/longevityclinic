@@ -70,7 +70,7 @@ package.json                3 runtime + 2 dev závislosti
 src/main.jsx         11 ř.  createRoot, přepínač ?sauna, import index.css
 src/App.jsx         ~900 ř. VEŠKERÝ obsah a všechny sekce hlavní stránky
 src/index.css      ~1180 ř. světlý design systém, komponentní třídy, responzivita
-src/Sauna.jsx       528 ř.  3D areál lesní sauny (three.js), route ?sauna
+src/Sauna.jsx       711 ř.  3D areál lesní sauny (three.js), route ?sauna
 src/sauna.css        35 ř.  styly overlaye pro 3D saunu
 src/Vortex.jsx      228 ř.  ARCHIV — starý 3D vortex, nikde se neimportuje
 public/favicon.svg          yin-yang značka
@@ -126,7 +126,7 @@ je `{ passive: true }`. Nepřidávej další scroll listenery — rozšiř tenhl
 
 Samostatná stránka mimo hlavní web, dostupná přes `?sauna` (odkaz je v NAV jako
 „3D sauna"). Celý 3D běh je v jednom `useEffect` s poctivým cleanupem:
-OrbitControls, deset předdefinovaných pohledů v poli `stops`. Má vlastní
+OrbitControls, jedenáct předdefinovaných pohledů v poli `stops`. Má vlastní
 `sauna.css`, které si resetuje styly zděděné z hlavního webu.
 
 Jak je scéna postavená (vše jen z balíčku `three` a jeho `examples/jsm`):
@@ -142,6 +142,16 @@ Jak je scéna postavená (vše jen z balíčku `three` a jeho `examples/jsm`):
   a místo pro ni určuje shora vyrenderovaná maska obsazenosti.
 - **Post-processing:** `EffectComposer` — obloha, scéna, `GTAOPass` v poloviční
   velikosti, `OutputPass`. Na telefonech (`low`) je GTAO vypnuté a vegetace řidší.
+- **Den / soumrak, léto / zima:** přepínače v UI volají `applyMode()`, která podle
+  předvolby v `MODES` přenastaví slunce, oblohu, mlhu, expozici a umělá světla.
+  Sníh je uniform `uSnow` ve všech materiálech z `patch()`; napadne jen na nejvyšší
+  plochu podle výškové mapy vyrenderované shora (`heightTarget`), takže pod střechami
+  nesněží. Co existuje jen v jedné sezóně, patří do `summerOnly` / `winterOnly`.
+- **Bazének** na desktopu živě zrcadlí okolí (`Reflector`); v zimě je zamrzlý s vysekaným
+  otvorem. Potok a jezírko leží pod úrovní terénu — terén je v jejich místě
+  vyříznutý maskou `holeTexture`.
+- **Postavy** skládá `person()` z kapslí (stoj, chůze, sed, leh, koupel) — jen pro
+  měřítko, bez obličejů, ve stylu architektonického modelu.
 
 Nové objekty přidávej přes `box()` / `cyl()` / `mesh()` před voláním `bake()`.
 Co visí na stěně nebo střeše sauny, patří do její skupiny v `roofs`, jinak
