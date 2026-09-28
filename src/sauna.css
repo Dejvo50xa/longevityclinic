@@ -33,3 +33,14 @@
 
 /* Reset clinic footer styles inherited by the 3D overlay. */
 .sauna-page .sauna-bottom{padding:0;background:transparent;border:0;box-shadow:none;backdrop-filter:none;min-height:0}
+
+/* Time of day and season switches. */
+.sauna-modes{position:absolute;top:84px;right:4%;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.sauna-modes div{display:flex;padding:3px;background:#10261fe8;border:1px solid #ffffff29;border-radius:5px;backdrop-filter:blur(12px)}
+.sauna-modes button{background:none;border:0;color:#d7ddcf;font-size:12px;letter-spacing:.06em;padding:7px 11px;border-radius:3px;min-width:64px}
+.sauna-modes button[aria-pressed="true"]{background:#e9dfbc;color:#172823}
+@media(max-width:700px){.sauna-modes{top:98px;flex-direction:row}.sauna-modes button{min-width:0;padding:7px 9px;font-size:11px}.sauna-heading{top:150px}}
+/* Over snow the heading needs a darker scrim, layered above the canvas. */
+.sauna-page.snowy:before{z-index:1;background:linear-gradient(#0c1b17b8,#0c1b1740 32%,transparent 52%)}
+.sauna-page.snowy .sauna-header,.sauna-page.snowy .sauna-heading,.sauna-page.snowy .sauna-modes{z-index:2}
+.sauna-page.snowy .sauna-bottom>div{text-shadow:0 1px 3px #0c1b17,0 0 12px #0c1b17}
