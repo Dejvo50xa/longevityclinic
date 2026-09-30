@@ -167,7 +167,6 @@ def encode_video(fps=25):
     frames_dir = os.path.join(OUT, 'tour_frames')
     files = sorted(f for f in os.listdir(frames_dir) if f.endswith('.png'))
     scene = bpy.data.scenes.new('Encode')
-    bpy.context.window_scene = scene if bpy.context.window else None
     scene.sequence_editor_create()
     strip = scene.sequence_editor.strips.new_image('tour', os.path.join(frames_dir, files[0]), 1, 1)
     for f in files[1:]:
@@ -176,11 +175,15 @@ def encode_video(fps=25):
     scene.render.fps = fps
     scene.render.resolution_x, scene.render.resolution_y = 1280, 720
     scene.render.resolution_percentage = 100
+    if hasattr(scene.render.image_settings, 'media_type'):  # Blender 5: choose video output first
+        scene.render.image_settings.media_type = 'VIDEO'
     scene.render.image_settings.file_format = 'FFMPEG'
     scene.render.ffmpeg.format = 'MPEG4'
     scene.render.ffmpeg.codec = 'H264'
     scene.render.ffmpeg.constant_rate_factor = 'HIGH'
     scene.render.filepath = os.path.join(OUT, 'aevum_flythrough.mp4')
+    if bpy.context.window:
+        bpy.context.window.scene = scene
     bpy.ops.render.render(animation=True, scene=scene.name)
 
 
