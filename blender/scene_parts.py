@@ -87,9 +87,15 @@ def limb(B, a, b, r, mat, G):
     B.add(g_capsule(r, max(.01, d.length), 3, 10), mat, G @ M, coll='People')
 
 
-def person(B, pose, x, y, z, ry, S=.45, W=0., robe=None):
+PEOPLE = []  # where every figure stands, so people.py can put a realistic person there instead
+
+
+def person(B, pose, x, y, z, ry, S=.45, W=0., robe=None, dressed=False):
     """Faceless figure for scale, in the manner of an architectural model."""
     V = Vector
+    G = trs(x, y, z, ry=ry)
+    PEOPLE.append(dict(pose=pose, G=B.stack[-1] @ G, S=S, W=W,
+                       outfit='casual' if dressed or (pose == 'walk' and not robe) else 'swim'))
     body = robe or 'skin'
     w = 1 if pose == 'walk' else 0
     if pose == 'sit':
@@ -111,7 +117,6 @@ def person(B, pose, x, y, z, ry, S=.45, W=0., robe=None):
                  knee=[V((-.09, .5, .12 * w)), V((.09, .5, -.08 * w))], ank=[V((-.09, .08, .22 * w)), V((.09, .08, -.2 * w))],
                  sh=[V((-.19, 1.43, 0)), V((.19, 1.43, 0))], el=[V((-.23, 1.14, -.1 * w)), V((.23, 1.14, .1 * w))],
                  wr=[V((-.24, .88, -.16 * w + .03)), V((.24, .88, .18 * w + .03))], foot=V((0, 0, 1)))
-    G = trs(x, y, z, ry=ry)
     limb(B, J['p'], J['c'], .14, body, G)
     limb(B, J['sh'][0], J['sh'][1], .07, body, G)
     limb(B, J['c'], J['h'], .05, 'skin', G)
@@ -747,7 +752,7 @@ def bridge_and_boardwalk(B, L):
     yaw = math.atan2(b[0] - a[0], b[1] - a[1])
     B.pop()
     B.pop()
-    person(B, 'sit', *seat, yaw, S=.4)
+    person(B, 'sit', *seat, yaw, S=.4, dressed=True)
 
 
 def site_furniture(B, L):
@@ -774,7 +779,7 @@ def site_furniture(B, L):
             B.box(.12, .58, .4, 'charred', 12 + sin(a) * 2.4 + cos(a) * s, .06, 27 + cos(a) * 2.4 - sin(a) * s, ry=a)
     for i in (1, 3):
         a = i / 5 * TAU
-        person(B, 'sit', 12 + sin(a) * 2.55, -.225, 27 + cos(a) * 2.55, a + pi, S=.77)
+        person(B, 'sit', 12 + sin(a) * 2.55, -.225, 27 + cos(a) * 2.55, a + pi, S=.77, dressed=True)
     B.cyl(.5, .55, .3, 'paving', 12, .1, 27, 24)
     B.add(g_cyl(.78, .45, .34, 32, open_=True), 'corten', trs(12, .42, 27))
     B.add(g_circle(.45, 24), 'corten', trs(12, .26, 27, rx=-pi / 2))
@@ -790,7 +795,7 @@ def site_furniture(B, L):
         B.cyl(.16, .18, .4, 'chrome', x, 1.12, -20, 16)
     for i in range(6):
         B.cyl(.035, .03, .08, 'towel2', -8.1 + i * .12, .96, -19.75, 10)
-    person(B, 'stand', -8.3, -.225, -19.2, pi)
+    person(B, 'stand', -8.3, -.225, -19.2, pi, dressed=True)
     person(B, 'walk', .7, -.12, 12, pi)
     person(B, 'walk', -17, -.12, 12.9, -pi / 2 + .1, robe='robe2')
     person(B, 'walk', 31.5, -.12, -18, pi + .1)
