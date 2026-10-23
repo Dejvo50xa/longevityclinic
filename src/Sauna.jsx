@@ -122,8 +122,33 @@ const MODES={
  winterDusk:{elev:3,az:-100,sky:[7,2.4,.006,.9],sun:['#ff9c6e',.8],hemi:['#7483aa','#5a5f6c',.28],env:.5,fog:['#7a8193',.003],exposure:1.25,clouds:[.75,.38,'#ffb08a'],night:1,smoke:.45,body:.35}
 }
 
+// Photorealistic Blender renders of the same site (blender/), shown on request so they never slow the 3D view.
+const RENDERS=[
+ {src:'flythrough',video:true,title:'Průlet areálem',text:'36 sekund letem přes všechna místa retreatu.'},
+ {src:'overview-dusk',title:'Areál za soumraku',text:'Tři sauny, odpočívárna a jezírko v lese.'},
+ {src:'finska-day',title:'Finská sauna',text:'Terasa, kádě na ochlazení a pohled do lesa.'},
+ {src:'finska-interior-day',title:'Uvnitř finské sauny',text:'Lavice z měkkého dřeva a kamna s kameny.'},
+ {src:'plunge-day',title:'Ochlazovací káď',text:'Studená voda hned vedle saunové terasy.'},
+ {src:'lounge-interior-day',title:'Odpočívárna',text:'Lehátka s výhledem do korun stromů.'},
+ {src:'pool-day',title:'Přírodní bazén',text:'Kruhový bazén obklopený trávou a kameny.'},
+ {src:'ceremonial-winter-dusk',title:'Solná sauna v zimě',text:'Kruhová stavba za zimního soumraku.'},
+ {src:'overview-winter-day',title:'Areál v zimě',text:'Zasněžený les a cesty mezi saunami.'},
+]
+function RenderGallery({onClose}){
+ const [i,setI]=useState(0),close=useRef(),r=RENDERS[i],go=d=>setI(n=>(n+d+RENDERS.length)%RENDERS.length)
+ useEffect(()=>{close.current.focus();const key=e=>{if(e.key==='Escape')onClose();if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1)};addEventListener('keydown',key);return()=>removeEventListener('keydown',key)},[])
+ const base='/sauna-renders/'
+ return <div className="sauna-gallery" role="dialog" aria-modal="true" aria-label="Fotorealistické vizualizace">
+  <div className="sauna-gallery-top"><span>VIZUALIZACE · {String(i+1).padStart(2,'0')} / {String(RENDERS.length).padStart(2,'0')}</span><button ref={close} onClick={onClose}>Zavřít ×</button></div>
+  <figure>{r.video?<video key="v" src={base+'flythrough.mp4'} poster={base+'video-poster.webp'} controls playsInline preload="none"/>:<img key={r.src} src={base+r.src+'.webp'} alt={r.title}/>}
+   <figcaption><button aria-label="Předchozí" onClick={()=>go(-1)}>←</button><div><h2>{r.title}</h2><p>{r.text}</p></div><button aria-label="Další" onClick={()=>go(1)}>→</button></figcaption></figure>
+  <nav aria-label="Výběr vizualizace">{RENDERS.map((x,n)=><button key={x.src} aria-pressed={n===i} aria-label={x.title} onClick={()=>setI(n)}><img src={base+(x.video?'video-poster':x.src+'-thumb')+'.webp'} alt="" loading="lazy"/>{x.video&&<span>▶</span>}</button>)}</nav>
+  <small>Ilustrativní vizualizace konceptu. Postavy: MakeHuman (CC0), plavky: balíčky MakeHuman „Underwear 03“ a „Pants 03“ (CC-BY). Krajina a textury: Poly Haven (CC0).</small>
+ </div>
+}
+
 export default function Sauna(){
- const host=useRef(),api=useRef();const [active,setActive]=useState(0),[cut,setCut]=useState(false),[error,setError]=useState(false),[details,setDetails]=useState(false),[dusk,setDusk]=useState(false),[winter,setWinter]=useState(false)
+ const host=useRef(),api=useRef();const [active,setActive]=useState(0),[cut,setCut]=useState(false),[error,setError]=useState(false),[details,setDetails]=useState(false),[gallery,setGallery]=useState(false),[dusk,setDusk]=useState(false),[winter,setWinter]=useState(false)
  const choose=i=>{setActive(i);setCut(false);api.current?.go(i)}
  useEffect(()=>{document.title='Lesní sauna · AEVUM';const el=host.current;let renderer
  try{renderer=new T.WebGLRenderer({antialias:false,powerPreference:'high-performance'})}catch{setError(true);return}
@@ -707,5 +732,5 @@ export default function Sauna(){
  },[])
  useEffect(()=>api.current?.cut(cut),[cut])
  useEffect(()=>api.current?.mode(dusk,winter),[dusk,winter])
- return <main className={winter&&!dusk?'sauna-page snowy':'sauna-page'}><div ref={host} className="sauna-scene" aria-label="Interaktivní 3D model sauny v lese"/><header className="sauna-header"><a href="/">AEVUM <span>← Zpět na kliniku</span></a><span>LESNÍ RETREAT / 3D STUDIE</span></header><div className="sauna-modes"><div role="group" aria-label="Denní doba"><button aria-pressed={!dusk} onClick={()=>setDusk(false)}>Den</button><button aria-pressed={dusk} onClick={()=>setDusk(true)}>Soumrak</button></div><div role="group" aria-label="Roční období"><button aria-pressed={!winter} onClick={()=>setWinter(false)}>Léto</button><button aria-pressed={winter} onClick={()=>setWinter(true)}>Zima</button></div></div><div className="sauna-heading"><p>TŘI SAUNY. JEDEN KLID.</p><h1>Lesní lázně.</h1><span>Finská · herbal · solná · odpočívárna</span></div>{error&&<div className="sauna-error">3D zobrazení není dostupné. Zkuste prohlížeč s podporou WebGL. Popis míst si můžete projít níže.</div>}<button className="sauna-info-toggle" aria-expanded={details} aria-controls="sauna-info" onClick={()=>setDetails(!details)}>{details ? 'Zavřít detail ×' : 'O místě ⓘ'}</button>{details && <aside id="sauna-info" className="sauna-detail" aria-live="polite"><span>{stops[active].tag}</span><h2>{stops[active].name}</h2><p>{stops[active].text}</p><button onClick={()=>setCut(!cut)} aria-pressed={cut}>{cut?'Zavřít řez saunou':'Otevřít řez saunou'} ↗</button></aside>}<div className="sauna-rotate" role="group" aria-label="Otáčení pohledu"><button aria-label="Otočit pohled doleva" onClick={()=>api.current?.rotate(1)}>←</button><span>Otočit pohled</span><button aria-label="Otočit pohled doprava" onClick={()=>api.current?.rotate(-1)}>→</button></div><footer className="sauna-bottom"><nav aria-label="Místa v sauně">{stops.map((s,i)=><button key={s.name} aria-pressed={active===i} className={active===i?'selected':''} onClick={()=>choose(i)}><span>{String(i+1).padStart(2,'0')}</span>{s.name}</button>)}</nav><div><span>Levé: posun mapy · pravé: otáčení · kolečko: přiblížení bez centrování · jeden prst: posun</span><span>Koncept prostoru, nikoli realizační dokumentace</span></div></footer></main>
+ return <main className={winter&&!dusk?'sauna-page snowy':'sauna-page'}><div ref={host} className="sauna-scene" aria-label="Interaktivní 3D model sauny v lese"/><header className="sauna-header"><a href="/">AEVUM <span>← Zpět na kliniku</span></a><span>LESNÍ RETREAT / 3D STUDIE</span></header><div className="sauna-modes"><div role="group" aria-label="Denní doba"><button aria-pressed={!dusk} onClick={()=>setDusk(false)}>Den</button><button aria-pressed={dusk} onClick={()=>setDusk(true)}>Soumrak</button></div><div role="group" aria-label="Roční období"><button aria-pressed={!winter} onClick={()=>setWinter(false)}>Léto</button><button aria-pressed={winter} onClick={()=>setWinter(true)}>Zima</button></div></div><div className="sauna-heading"><p>TŘI SAUNY. JEDEN KLID.</p><h1>Lesní lázně.</h1><span>Finská · herbal · solná · odpočívárna</span></div>{error&&<div className="sauna-error">3D zobrazení není dostupné. Zkuste prohlížeč s podporou WebGL. Popis míst si můžete projít níže.</div>}<button className="sauna-gallery-toggle" onClick={()=>setGallery(true)}>Vizualizace ▸</button>{gallery&&<RenderGallery onClose={()=>setGallery(false)}/>}<button className="sauna-info-toggle" aria-expanded={details} aria-controls="sauna-info" onClick={()=>setDetails(!details)}>{details ? 'Zavřít detail ×' : 'O místě ⓘ'}</button>{details && <aside id="sauna-info" className="sauna-detail" aria-live="polite"><span>{stops[active].tag}</span><h2>{stops[active].name}</h2><p>{stops[active].text}</p><button onClick={()=>setCut(!cut)} aria-pressed={cut}>{cut?'Zavřít řez saunou':'Otevřít řez saunou'} ↗</button></aside>}<div className="sauna-rotate" role="group" aria-label="Otáčení pohledu"><button aria-label="Otočit pohled doleva" onClick={()=>api.current?.rotate(1)}>←</button><span>Otočit pohled</span><button aria-label="Otočit pohled doprava" onClick={()=>api.current?.rotate(-1)}>→</button></div><footer className="sauna-bottom"><nav aria-label="Místa v sauně">{stops.map((s,i)=><button key={s.name} aria-pressed={active===i} className={active===i?'selected':''} onClick={()=>choose(i)}><span>{String(i+1).padStart(2,'0')}</span>{s.name}</button>)}</nav><div><span>Levé: posun mapy · pravé: otáčení · kolečko: přiblížení bez centrování · jeden prst: posun</span><span>Koncept prostoru, nikoli realizační dokumentace</span></div></footer></main>
 }

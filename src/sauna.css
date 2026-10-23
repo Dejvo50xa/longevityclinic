@@ -44,3 +44,24 @@
 .sauna-page.snowy:before{z-index:1;background:linear-gradient(#0c1b17b8,#0c1b1740 32%,transparent 52%)}
 .sauna-page.snowy .sauna-header,.sauna-page.snowy .sauna-heading,.sauna-page.snowy .sauna-modes{z-index:2}
 .sauna-page.snowy .sauna-bottom>div{text-shadow:0 1px 3px #0c1b17,0 0 12px #0c1b17}
+
+/* Photorealistic render gallery, opened from a button so the 3D view stays light. */
+.sauna-gallery-toggle{position:absolute;right:calc(4% + 112px);bottom:96px;background:#e9dfbc;color:#172823;border:1px solid #e9dfbc;border-radius:5px;padding:11px 14px;font-size:13px}
+@media(max-width:700px){.sauna-gallery-toggle{bottom:88px;right:calc(4% + 108px);padding:11px 12px}}
+.sauna-gallery{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;gap:12px;padding:22px 4% 16px;background:#0c1b17;overflow:auto}
+.sauna-gallery-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:.16em;color:#ddc58e}
+.sauna-gallery-top button,.sauna-gallery figcaption button{background:#10261f;color:#f4f0df;border:1px solid #ffffff40;border-radius:5px;padding:10px 14px;font-size:13px}
+.sauna-gallery figure{flex:1;min-height:0;margin:0;display:flex;flex-direction:column;gap:12px}
+.sauna-gallery figure>img,.sauna-gallery figure>video{flex:1;min-height:0;width:100%;object-fit:contain;background:#081310;border-radius:3px}
+.sauna-gallery figcaption{display:flex;align-items:center;gap:16px;justify-content:center;text-align:center}
+.sauna-gallery figcaption div{min-width:0;max-width:560px}
+.sauna-gallery figcaption h2{font:24px Georgia,serif;margin:0 0 4px}
+.sauna-gallery figcaption p{margin:0;font-size:14px;color:#d0d9ce}
+.sauna-gallery figcaption button{width:44px;height:44px;padding:0;font-size:20px;flex:none}
+.sauna-gallery nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;justify-content:safe center;flex:none}
+.sauna-gallery nav button{position:relative;flex:none;padding:0;border:2px solid transparent;border-radius:4px;background:none;opacity:.65}
+.sauna-gallery nav button[aria-pressed="true"]{border-color:#e9dfbc;opacity:1}
+.sauna-gallery nav img{display:block;width:96px;height:54px;object-fit:cover;border-radius:2px}
+.sauna-gallery nav span{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:18px;text-shadow:0 1px 6px #000}
+.sauna-gallery small{font-size:11px;color:#aab6aa;text-align:center;flex:none}
+@media(max-width:700px){.sauna-gallery{padding:16px 4% 12px}.sauna-gallery figcaption h2{font-size:19px}.sauna-gallery figcaption p{font-size:13px}.sauna-gallery nav img{width:72px;height:40px}}
