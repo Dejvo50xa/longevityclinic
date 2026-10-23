@@ -7,6 +7,7 @@ a skenovaná vegetace z Poly Haven (CC0), osvětlení z fotografií oblohy.
 python3 blender/fetch_assets.py                     # ~800 MB do ~/dev/longevityclinic-blender-assets
 blender -b -P blender/build_scene.py                # postaví scénu -> sauna.blend (~20 s)
 blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- stills
+blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- panoramas   # 11 × 360° fotek (~1 h)
 blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- video
 blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- encode
 blender -b -P blender/render.py -- encode --web      # menší kopie videa pro web -> public/sauna-renders/
@@ -17,7 +18,15 @@ blender -b -P blender/render.py -- encode --web      # menší kopie videa pro w
 - `people.py` — realistické postavy (MakeHuman) místo bílých figurín, stejná místa a pózy
 - `render.py` — nálady den / soumrak / zima (`MODES`), seznam snímků (`STILLS`), trasa videa (`TOUR`)
 
-Náhled: `-- stills --only finska:day --quick`. Výstupy jdou do `~/dev/longevityclinic-blender-assets/renders/`
+360° fotky pro web (`cwebp` z Homebrew): plná verze 6144 px a menší `-m` pro telefony.
+
+```bash
+cd ~/dev/longevityclinic-blender-assets/renders/panoramas && for f in areal finska herbal solna odpocivarna ochlazeni bazen u-vody klinika vstup potok; do
+  cwebp -quiet -q 78 -m 6 $f.png -o ~/dev/longevityclinic/public/sauna-renders/pano-$f.webp
+  cwebp -quiet -q 78 -m 6 -resize 4096 2048 $f.png -o ~/dev/longevityclinic/public/sauna-renders/pano-$f-m.webp; done
+```
+
+Náhled: `-- stills --only finska:day --quick`, `-- panoramas --only finska --quick`. Výstupy jdou do `~/dev/longevityclinic-blender-assets/renders/`
 a do gitu nepatří. První render na GPU trvá déle (kompilace kernelů).
 
 ## Lidé (volitelné)

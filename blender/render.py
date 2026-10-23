@@ -1,7 +1,8 @@
-"""Render the sauna retreat: studio stills in four moods and a fly-through video.
+"""Render the sauna retreat: studio stills in four moods, 360° photos and a fly-through video.
 
   blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- stills
   blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- stills --only overview:day --quick
+  blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- panoramas [--only finska,potok] [--quick]
   blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- video
   blender -b -P blender/render.py -- encode [--web]   (--web: smaller copy for the website, public/sauna-renders/)
 Output goes to ~/dev/longevityclinic-blender-assets/renders/.
@@ -13,7 +14,7 @@ import sys
 import bpy
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from scene_kit import ASSETS, HDRI, hdri_sun_direction, set_control, use_gpu  # noqa: E402
+from scene_kit import ASSETS, HDRI, bl, hdri_sun_direction, set_control, use_gpu  # noqa: E402
 
 OUT = os.path.join(ASSETS, 'renders')
 WEB_VIDEO = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public', 'sauna-renders', 'flythrough.mp4')
@@ -27,6 +28,21 @@ MODES = {
 STILLS = [(s, 'day') for s in ('overview', 'finska', 'finska_interior', 'herbal', 'ceremonial', 'lounge', 'lounge_interior',
                               'plunge', 'pool', 'pergola', 'clinic', 'entrance', 'stream')]
 STILLS += [(s, m) for m in ('dusk', 'winter_day', 'winter_dusk') for s in ('overview', 'finska', 'pool', 'ceremonial', 'lounge')]
+# 360° photos for the web page, one per place, in the order of `stops` in src/Sauna.jsx.
+# eye: three.js position; look: what sits in the middle of the photo; ev: extra exposure (interiors are darker).
+PANORAMAS = [
+    ('areal', (-8, 26, -4), (0, 0, -22), 0),
+    ('finska', (1.3, 1.5, .8), (-1.5, 1, -1), 1),
+    ('herbal', (-36.2, 1.4, 8.75), (-34.7, 1.2, 1.6), 0),
+    ('solna', (16.5, 1.7, -37.7), (18, 1, -39), 3),
+    ('odpocivarna', (0, 1.6, -27.6), (-5, 1.2, -33), 2.2),
+    ('ochlazeni', (6.2, 1.6, 4.4), (3.5, .8, 1.5), 0),
+    ('bazen', (-14.2, 1.4, 25.7), (-19, .5, 20), 0),
+    ('u-vody', (-31, 1.6, 25.5), (-19, .5, 20), 0),
+    ('klinika', (99.5, 1.75, -58.6), (101, 3, -70), 0),
+    ('vstup', (.5, 1.48, 21), (0, 1, 0), 0),
+    ('potok', (-30.2, 1.7, -21.9), (-28.6, -.3, -20.6), 0),
+]
 _sun_cache = {}
 
 
@@ -82,6 +98,35 @@ def render_stills(plan, quick=False):
         scene.render.filepath = os.path.join(OUT, f'{shot}_{mode}{"_quick" if quick else ""}.png')
         bpy.ops.render.render(write_still=True)
         print('rendered', scene.render.filepath, flush=True)
+
+
+def render_panoramas(plan, quick=False):
+    """Equirectangular 360° photos (2:1), level horizon, standing eye height, summer day."""
+    scene = bpy.context.scene
+    apply_mode(name='day')
+    cd = bpy.data.cameras.new('Panorama')
+    cd.type = 'PANO'
+    cd.panorama_type = 'EQUIRECTANGULAR'
+    cd.clip_start, cd.clip_end = .05, 3000
+    cam = bpy.data.objects.new('Cam panorama', cd)
+    scene.collection.objects.link(cam)
+    scene.camera = cam
+    scene.render.resolution_x, scene.render.resolution_y = (1536, 768) if quick else (6144, 3072)
+    scene.render.resolution_percentage = 100
+    if quick:
+        scene.cycles.samples = 16
+    base = scene.view_settings.exposure
+    folder = os.path.join(OUT, 'panoramas')
+    os.makedirs(folder, exist_ok=True)
+    for key, eye, look, ev in plan:
+        P, T = bl(*eye), bl(*look)
+        cam.location = P
+        cam.rotation_euler = (math.pi / 2, 0, math.atan2(-(T - P).x, (T - P).y))  # photo centre faces `look`
+        scene.view_settings.exposure = base + ev
+        scene.render.filepath = os.path.join(folder, f'{key}{"_quick" if quick else ""}.png')
+        bpy.ops.render.render(write_still=True)
+        print('rendered', scene.render.filepath, flush=True)
+    scene.view_settings.exposure = base
 
 
 # Fly-through: (three.js position, look-at target) waypoints, flown along a smooth curve.
@@ -203,6 +248,12 @@ def main(argv):
         if '--only' in args:
             plan = [tuple(x.split(':')) for x in args[args.index('--only') + 1].split(',')]
         render_stills(plan, quick)
+    elif args and args[0] == 'panoramas':
+        plan = PANORAMAS
+        if '--only' in args:
+            keys = args[args.index('--only') + 1].split(',')
+            plan = [p for p in PANORAMAS if p[0] in keys]
+        render_panoramas(plan, quick)
     elif args and args[0] == 'video':
         frames = None
         if '--frames' in args:
