@@ -73,6 +73,8 @@ src/index.css      ~1180 ř. světlý design systém, komponentní třídy, resp
 src/Sauna.jsx       711 ř.  3D areál lesní sauny (three.js), route ?sauna
 src/sauna.css        35 ř.  styly overlaye pro 3D saunu
 src/Vortex.jsx      228 ř.  ARCHIV — starý 3D vortex, nikde se neimportuje
+blender/                    fotorealistická verze areálu v Blenderu (viz blender/README.md)
+public/sauna-renders/       rendery z Blenderu: galerie, video, 360° fotky pano-*.webp
 public/favicon.svg          yin-yang značka
 public/og.png               1200×630 náhled pro sociální sítě
 public/robots.txt
@@ -152,6 +154,12 @@ Jak je scéna postavená (vše jen z balíčku `three` a jeho `examples/jsm`):
   vyříznutý maskou `holeTexture`.
 - **Postavy** skládá `person()` z kapslí (stoj, chůze, sed, leh, koupel) — jen pro
   měřítko, bez obličejů, ve stylu architektonického modelu.
+- **Vizualizace a 360° pohledy:** tlačítko „Vizualizace" otevře galerii renderů
+  z Blenderu (`RENDERS`). Klik na místo v dolní liště otevře jeho 360° fotku
+  (`Panorama`, pořadí `PANOS` = pořadí `stops` = `PANORAMAS` v `blender/render.py`).
+  Fotka je koule s texturou ve vlastním malém rendereru, kreslí se jen při pohybu;
+  3D model mezitím stojí (`api.pause`). Telefony dostanou verzi `-m` (4096 px),
+  větší obrazovky 6144 px. Soubory se stahují až po otevření.
 
 Nové objekty přidávej přes `box()` / `cyl()` / `mesh()` před voláním `bake()`.
 Co visí na stěně nebo střeše sauny, patří do její skupiny v `roofs`, jinak

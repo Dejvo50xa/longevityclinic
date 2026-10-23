@@ -147,9 +147,56 @@ function RenderGallery({onClose}){
  </div>
 }
 
+// 360° photos rendered in Blender (blender/render.py -- panoramas), one per place in `stops`, opened from the place list.
+const PANOS=['areal','finska','herbal','solna','odpocivarna','ochlazeni','bazen','u-vody','klinika','vstup','potok'],PANO_LAT={areal:-32,vstup:6}
+function Panorama({index,control,onClose}){
+ const host=useRef(),view=useRef(),[status,setStatus]=useState('loading')
+ useEffect(()=>{const el=host.current;let renderer
+  try{renderer=new T.WebGLRenderer()}catch{setStatus('flat');return}
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor('#0c1b17');el.append(renderer.domElement)
+  const canvas=renderer.domElement,scene=new T.Scene(),camera=new T.PerspectiveCamera(70,1,1,1100)
+  const geometry=new T.SphereGeometry(500,96,48).scale(-1,1,1),material=new T.MeshBasicMaterial({color:'#0c1b17'});scene.add(new T.Mesh(geometry,material))
+  // Where the view is (at) and where it is heading (to), in degrees; every change glides from one to the other.
+  const at={lon:180,lat:0,fov:70},to={...at};let frame=0
+  const draw=()=>{for(const k in at)at[k]+=(to[k]-at[k])*.25
+   const phi=T.MathUtils.degToRad(90-at.lat),theta=T.MathUtils.degToRad(at.lon)
+   camera.fov=at.fov;camera.updateProjectionMatrix();camera.lookAt(Math.sin(phi)*Math.cos(theta),Math.cos(phi),Math.sin(phi)*Math.sin(theta));renderer.render(scene,camera)
+   frame=Object.keys(at).some(k=>Math.abs(to[k]-at[k])>.01)?requestAnimationFrame(draw):0}
+  const tall=()=>el.clientHeight>el.clientWidth  // phones held upright need a taller view to see enough around
+  const wake=()=>{to.lat=Math.max(-85,Math.min(85,to.lat));to.fov=Math.max(30,Math.min(tall()?100:90,to.fov));if(!frame)frame=requestAnimationFrame(draw)}
+  // One finger or the mouse drags the view, two fingers pinch to zoom.
+  const touches=new Map();let grab
+  const spread=()=>{const [a,b]=[...touches.values()];return b?Math.hypot(a[0]-b[0],a[1]-b[1]):0}
+  const anchor=(x,y)=>grab={x,y,lon:to.lon,lat:to.lat,fov:to.fov,spread:spread()}
+  const onDown=e=>{canvas.setPointerCapture(e.pointerId);touches.set(e.pointerId,[e.clientX,e.clientY]);anchor(e.clientX,e.clientY)}
+  const onMove=e=>{if(!touches.has(e.pointerId))return;touches.set(e.pointerId,[e.clientX,e.clientY])
+   if(touches.size>1){if(grab.spread)to.fov=grab.fov*grab.spread/spread()}
+   else{const k=at.fov/el.clientHeight;to.lon=grab.lon+(grab.x-e.clientX)*k;to.lat=grab.lat+(e.clientY-grab.y)*k}
+   wake()}
+  const onUp=e=>{touches.delete(e.pointerId);const [p]=touches.values();if(p)anchor(p[0],p[1])}
+  const onWheel=e=>{e.preventDefault();to.fov*=Math.exp(e.deltaY*.0012);wake()}
+  const onKey=e=>{const step={ArrowLeft:[-15,0,1],ArrowRight:[15,0,1],ArrowUp:[0,10,1],ArrowDown:[0,-10,1],'+':[0,0,.85],'-':[0,0,1.18]}[e.key];if(!step)return;e.preventDefault();to.lon+=step[0];to.lat+=step[1];to.fov*=step[2];wake()}
+  canvas.tabIndex=0;canvas.setAttribute('role','img')
+  canvas.addEventListener('pointerdown',onDown);canvas.addEventListener('pointermove',onMove);canvas.addEventListener('pointerup',onUp);canvas.addEventListener('pointercancel',onUp);canvas.addEventListener('wheel',onWheel,{passive:false});canvas.addEventListener('keydown',onKey)
+  const fit=()=>{renderer.setSize(el.clientWidth,el.clientHeight);camera.aspect=el.clientWidth/el.clientHeight;wake()},resize=new ResizeObserver(fit);fit();resize.observe(el)
+  // Phones get the 4096 px version, larger screens the sharper 6144 px one when the GPU allows it.
+  const big=Math.min(innerWidth,innerHeight)>700&&renderer.capabilities.maxTextureSize>=8192
+  view.current={canvas,src:key=>`/sauna-renders/pano-${key}${big?'':'-m'}.webp`,show(texture,lat){texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=renderer.capabilities.getMaxAnisotropy();material.map?.dispose();material.map=texture;material.color.set('#fff');material.needsUpdate=true;Object.assign(at,{lon:180,lat,fov:tall()?85:70});Object.assign(to,at);wake()}}
+  control.current={turn:d=>{to.lon-=d*30;wake()}}
+  return()=>{cancelAnimationFrame(frame);resize.disconnect();material.map?.dispose();material.dispose();geometry.dispose();renderer.dispose();renderer.forceContextLoss();canvas.remove();control.current=null;view.current=null}
+ },[])
+ useEffect(()=>{const v=view.current;if(!v)return;let live=true;setStatus('loading');v.canvas.setAttribute('aria-label',`360° pohled: ${stops[index].name}. Táhněte pro rozhlížení, šipky otáčejí.`)
+  new T.TextureLoader().load(v.src(PANOS[index]),texture=>{if(!live)return texture.dispose();v.show(texture,PANO_LAT[PANOS[index]]??-4);setStatus('ready')},undefined,()=>live&&setStatus('failed'))
+  return()=>{live=false}},[index])
+ return <div className="sauna-pano"><div ref={host} className="sauna-pano-view"/>{status==='flat'&&<div className="sauna-pano-flat"><img src={`/sauna-renders/pano-${PANOS[index]}-m.webp`} alt={`360° pohled: ${stops[index].name}`}/></div>}
+  <div className="sauna-pano-bar"><div><span>360° · {stops[index].tag}</span><h2>{stops[index].name}</h2><small>Vizualizace z Blenderu · letní den · postavy MakeHuman, plavky CC‑BY</small></div><button onClick={onClose}>← Zpět na 3D mapu</button></div>
+  {(status==='loading'||status==='failed')&&<p className="sauna-pano-status" role="status">{status==='loading'?'Načítám 360° pohled…':'360° pohled se nepodařilo načíst.'}</p>}</div>
+}
+
 export default function Sauna(){
- const host=useRef(),api=useRef();const [active,setActive]=useState(0),[cut,setCut]=useState(false),[error,setError]=useState(false),[details,setDetails]=useState(false),[gallery,setGallery]=useState(false),[dusk,setDusk]=useState(false),[winter,setWinter]=useState(false)
- const choose=i=>{setActive(i);setCut(false);api.current?.go(i)}
+ const host=useRef(),api=useRef(),panoView=useRef();const [active,setActive]=useState(0),[cut,setCut]=useState(false),[error,setError]=useState(false),[details,setDetails]=useState(false),[gallery,setGallery]=useState(false),[pano,setPano]=useState(null),[dusk,setDusk]=useState(false),[winter,setWinter]=useState(false)
+ const choose=i=>{setActive(i);setCut(false);api.current?.go(i);setPano(i)}
+ const turn=d=>pano!==null?panoView.current?.turn(d):api.current?.rotate(d)
  useEffect(()=>{document.title='Lesní sauna · AEVUM';const el=host.current;let renderer
  try{renderer=new T.WebGLRenderer({antialias:false,powerPreference:'high-performance'})}catch{setError(true);return}
  // Phones and touch devices get fewer grass tufts and trees, a smaller shadow map and no ambient occlusion.
@@ -701,7 +748,7 @@ export default function Sauna(){
  // Compile every seasonal variant up front so the first switch does not stall.
  for(const o of [...winterOnly,...summerOnly])o.visible=true;renderer.compile(scene,camera);applyMode(false,false)
 
- let destination=null;const rotate=direction=>{destination=null;const offset=camera.position.clone().sub(controls.target);offset.applyAxisAngle(new T.Vector3(0,1,0),direction*Math.PI/8);camera.position.copy(controls.target).add(offset);controls.update()};api.current={rotate,go(i){destination={pos:new T.Vector3(...stops[i].pos),target:new T.Vector3(...stops[i].target)}},cut(v){roofs.forEach(roof=>roof.visible=!v);crownSmoke.visible=!v;renderer.shadowMap.needsUpdate=true},mode:applyMode}
+ let destination=null,paused=false;const rotate=direction=>{destination=null;const offset=camera.position.clone().sub(controls.target);offset.applyAxisAngle(new T.Vector3(0,1,0),direction*Math.PI/8);camera.position.copy(controls.target).add(offset);controls.update()};api.current={rotate,pause(v){paused=v},go(i){destination={pos:new T.Vector3(...stops[i].pos),target:new T.Vector3(...stops[i].target)}},cut(v){roofs.forEach(roof=>roof.visible=!v);crownSmoke.visible=!v;renderer.shadowMap.needsUpdate=true},mode:applyMode}
  controls.addEventListener('start',()=>destination=null)
  const zoomRay=new T.Raycaster(),zoomPointer=new T.Vector2();
  const onWheel=e=>{
@@ -723,7 +770,7 @@ export default function Sauna(){
  const onUp=e=>{if(Math.hypot(e.clientX-down[0],e.clientY-down[1])>6)return;const r=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(pointer,camera);const hit=ray.intersectObjects(markers)[0];if(hit)choose(hit.object.userData.index)}
  renderer.domElement.addEventListener('pointerdown',onDown);renderer.domElement.addEventListener('pointerup',onUp)
  const resize=new ResizeObserver(()=>{const w=el.clientWidth,h=el.clientHeight;renderer.setSize(w,h);composer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();snowfallMat.uniforms.uScale.value=h*renderer.getPixelRatio()/(2*Math.tan(T.MathUtils.degToRad(camera.fov/2)))});resize.observe(el)
- let frame;const tick=()=>{frame=requestAnimationFrame(tick);if(document.hidden)return;const t=reduced.matches?0:performance.now()*.001;uTime.value=t
+ let frame;const tick=()=>{frame=requestAnimationFrame(tick);if(document.hidden||paused)return;const t=reduced.matches?0:performance.now()*.001;uTime.value=t
   const flame=reduced.matches?1:.82+Math.sin(t*13)*.08+Math.sin(t*7.3+1)*.07+Math.sin(t*23)*.04;fire.emissiveIntensity=(4+2*night)*flame;stoveLight.intensity=stoveLight.userData.base*flame;fireLight.intensity=fireLight.userData.base*(reduced.matches?1:.85+Math.sin(t*9.7)*.1+Math.sin(t*5.1+2)*.08)
   if(destination){camera.position.lerp(destination.pos,.065);controls.target.lerp(destination.target,.065);if(camera.position.distanceTo(destination.pos)<.015)destination=null}
   controls.update();updateShadow();sky.position.copy(camera.position);clouds.position.copy(camera.position);composer.render()};tick()
@@ -732,5 +779,8 @@ export default function Sauna(){
  },[])
  useEffect(()=>api.current?.cut(cut),[cut])
  useEffect(()=>api.current?.mode(dusk,winter),[dusk,winter])
- return <main className={winter&&!dusk?'sauna-page snowy':'sauna-page'}><div ref={host} className="sauna-scene" aria-label="Interaktivní 3D model sauny v lese"/><header className="sauna-header"><a href="/">AEVUM <span>← Zpět na kliniku</span></a><span>LESNÍ RETREAT / 3D STUDIE</span></header><div className="sauna-modes"><div role="group" aria-label="Denní doba"><button aria-pressed={!dusk} onClick={()=>setDusk(false)}>Den</button><button aria-pressed={dusk} onClick={()=>setDusk(true)}>Soumrak</button></div><div role="group" aria-label="Roční období"><button aria-pressed={!winter} onClick={()=>setWinter(false)}>Léto</button><button aria-pressed={winter} onClick={()=>setWinter(true)}>Zima</button></div></div><div className="sauna-heading"><p>TŘI SAUNY. JEDEN KLID.</p><h1>Lesní lázně.</h1><span>Finská · herbal · solná · odpočívárna</span></div>{error&&<div className="sauna-error">3D zobrazení není dostupné. Zkuste prohlížeč s podporou WebGL. Popis míst si můžete projít níže.</div>}<button className="sauna-gallery-toggle" onClick={()=>setGallery(true)}>Vizualizace ▸</button>{gallery&&<RenderGallery onClose={()=>setGallery(false)}/>}<button className="sauna-info-toggle" aria-expanded={details} aria-controls="sauna-info" onClick={()=>setDetails(!details)}>{details ? 'Zavřít detail ×' : 'O místě ⓘ'}</button>{details && <aside id="sauna-info" className="sauna-detail" aria-live="polite"><span>{stops[active].tag}</span><h2>{stops[active].name}</h2><p>{stops[active].text}</p><button onClick={()=>setCut(!cut)} aria-pressed={cut}>{cut?'Zavřít řez saunou':'Otevřít řez saunou'} ↗</button></aside>}<div className="sauna-rotate" role="group" aria-label="Otáčení pohledu"><button aria-label="Otočit pohled doleva" onClick={()=>api.current?.rotate(1)}>←</button><span>Otočit pohled</span><button aria-label="Otočit pohled doprava" onClick={()=>api.current?.rotate(-1)}>→</button></div><footer className="sauna-bottom"><nav aria-label="Místa v sauně">{stops.map((s,i)=><button key={s.name} aria-pressed={active===i} className={active===i?'selected':''} onClick={()=>choose(i)}><span>{String(i+1).padStart(2,'0')}</span>{s.name}</button>)}</nav><div><span>Levé: posun mapy · pravé: otáčení · kolečko: přiblížení bez centrování · jeden prst: posun</span><span>Koncept prostoru, nikoli realizační dokumentace</span></div></footer></main>
+ // The 3D model rests while a 360° photo covers it; Esc goes back to the model.
+ useEffect(()=>api.current?.pause(pano!==null),[pano])
+ useEffect(()=>{if(pano===null||gallery)return;const key=e=>{if(e.key==='Escape')setPano(null)};addEventListener('keydown',key);return()=>removeEventListener('keydown',key)},[pano,gallery])
+ return <main className={'sauna-page'+(winter&&!dusk?' snowy':'')+(pano!==null?' pano-open':'')}><div ref={host} className="sauna-scene" aria-label="Interaktivní 3D model sauny v lese"/>{pano!==null&&<Panorama index={pano} control={panoView} onClose={()=>setPano(null)}/>}<header className="sauna-header"><a href="/">AEVUM <span>← Zpět na kliniku</span></a><span>LESNÍ RETREAT / 3D STUDIE</span></header><div className="sauna-modes"><div role="group" aria-label="Denní doba"><button aria-pressed={!dusk} onClick={()=>setDusk(false)}>Den</button><button aria-pressed={dusk} onClick={()=>setDusk(true)}>Soumrak</button></div><div role="group" aria-label="Roční období"><button aria-pressed={!winter} onClick={()=>setWinter(false)}>Léto</button><button aria-pressed={winter} onClick={()=>setWinter(true)}>Zima</button></div></div><div className="sauna-heading"><p>TŘI SAUNY. JEDEN KLID.</p><h1>Lesní lázně.</h1><span>Finská · herbal · solná · odpočívárna</span></div>{error&&<div className="sauna-error">3D zobrazení není dostupné. Zkuste prohlížeč s podporou WebGL. Popis míst si můžete projít níže.</div>}<button className="sauna-gallery-toggle" onClick={()=>setGallery(true)}>Vizualizace ▸</button>{gallery&&<RenderGallery onClose={()=>setGallery(false)}/>}<button className="sauna-info-toggle" aria-expanded={details} aria-controls="sauna-info" onClick={()=>setDetails(!details)}>{details ? 'Zavřít detail ×' : 'O místě ⓘ'}</button>{details && <aside id="sauna-info" className="sauna-detail" aria-live="polite"><span>{stops[active].tag}</span><h2>{stops[active].name}</h2><p>{stops[active].text}</p><button onClick={()=>setCut(!cut)} aria-pressed={cut}>{cut?'Zavřít řez saunou':'Otevřít řez saunou'} ↗</button></aside>}<div className="sauna-rotate" role="group" aria-label="Otáčení pohledu"><button aria-label="Otočit pohled doleva" onClick={()=>turn(1)}>←</button><span>Otočit pohled</span><button aria-label="Otočit pohled doprava" onClick={()=>turn(-1)}>→</button></div><footer className="sauna-bottom"><nav aria-label="Místa v sauně">{stops.map((s,i)=><button key={s.name} aria-pressed={active===i} className={active===i?'selected':''} onClick={()=>choose(i)}><span>{String(i+1).padStart(2,'0')}</span>{s.name}</button>)}</nav><div><span>{pano!==null?'Táhněte pro rozhlížení · kolečko nebo dva prsty: přiblížení':'Klikněte na místo pro 360° pohled · levé: posun mapy · pravé: otáčení · kolečko: přiblížení bez centrování · jeden prst: posun'}</span><span>Koncept prostoru, nikoli realizační dokumentace</span></div></footer></main>
 }
