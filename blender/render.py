@@ -3,6 +3,7 @@
   blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- stills
   blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- stills --only overview:day --quick
   blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- video
+  blender -b -P blender/render.py -- encode [--web]   (--web: smaller copy for the website, public/sauna-renders/)
 Output goes to ~/dev/longevityclinic-blender-assets/renders/.
 """
 import math
@@ -15,6 +16,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from scene_kit import ASSETS, HDRI, hdri_sun_direction, set_control, use_gpu  # noqa: E402
 
 OUT = os.path.join(ASSETS, 'renders')
+WEB_VIDEO = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public', 'sauna-renders', 'flythrough.mp4')
 # Real skies; 'az' turns each sky so its sun sits where the web scene's sun is (degrees, Blender world).
 MODES = {
     'day': dict(hdri='kloofendal_38d_partly_cloudy_puresky', strength=1., az=-95, night=0., snow=0., exposure=.55),
@@ -162,11 +164,13 @@ def render_video(fps=25, seconds=36, engine='EEVEE', res=(1920, 1080), frames=No
         print('frame', f, flush=True)
 
 
-def encode_video(fps=25):
+def encode_video(fps=25, path=None, quality='HIGH'):
     """Join the PNG frames into an H.264 MP4 using Blender's sequencer."""
     frames_dir = os.path.join(OUT, 'tour_frames')
     files = sorted(f for f in os.listdir(frames_dir) if f.endswith('.png'))
     scene = bpy.data.scenes.new('Encode')
+    scene.view_settings.view_transform = 'Standard'  # frames are already tone-mapped; the default AgX would dull them twice
+    scene.view_settings.look = 'None'
     scene.sequence_editor_create()
     strip = scene.sequence_editor.strips.new_image('tour', os.path.join(frames_dir, files[0]), 1, 1)
     for f in files[1:]:
@@ -180,8 +184,11 @@ def encode_video(fps=25):
     scene.render.image_settings.file_format = 'FFMPEG'
     scene.render.ffmpeg.format = 'MPEG4'
     scene.render.ffmpeg.codec = 'H264'
-    scene.render.ffmpeg.constant_rate_factor = 'HIGH'
-    scene.render.filepath = os.path.join(OUT, 'aevum_flythrough.mp4')
+    scene.render.ffmpeg.constant_rate_factor = quality
+    scene.render.ffmpeg.ffmpeg_preset = 'BEST'
+    scene.render.ffmpeg.gopsize = fps  # a keyframe every second, so the web player can jump anywhere quickly
+    scene.render.ffmpeg.audio_codec = 'NONE'
+    scene.render.filepath = path or os.path.join(OUT, 'aevum_flythrough.mp4')
     if bpy.context.window:
         bpy.context.window.scene = scene
     bpy.ops.render.render(animation=True, scene=scene.name)
@@ -203,7 +210,7 @@ def main(argv):
             frames = range(int(a), int(b) + 1)
         render_video(engine='EEVEE' if '--eevee' in args else 'CYCLES', res=(1280, 720), frames=frames)
     elif args and args[0] == 'encode':
-        encode_video()
+        encode_video(**(dict(path=WEB_VIDEO, quality='MEDIUM') if '--web' in args else {}))
 
 
 if __name__ == '__main__':

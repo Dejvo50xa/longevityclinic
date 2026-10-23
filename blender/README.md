@@ -9,6 +9,7 @@ blender -b -P blender/build_scene.py                # postaví scénu -> sauna.b
 blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- stills
 blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- video
 blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- encode
+blender -b -P blender/render.py -- encode --web      # menší kopie videa pro web -> public/sauna-renders/
 ```
 
 - `scene_kit.py` — stavebnice geometrie, materiály, sníh, rozmisťování vegetace, nastavení renderu
