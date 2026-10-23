@@ -28,6 +28,11 @@ def main():
     B = Builder(materials)
     layout = scene_parts.build_everything(B)
     B.finish()
+    import people
+    if people.available():  # realistic people replace the white figures
+        for ob in list(bpy.data.collections['People'].objects):
+            bpy.data.objects.remove(ob)
+        people.build_people(scene_parts.PEOPLE)
     scene_parts.plant_vegetation(B, layout)
     scene_parts.add_lights_and_cameras(layout)
     import render
