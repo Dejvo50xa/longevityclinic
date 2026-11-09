@@ -17,10 +17,10 @@ const stops=[
  {name:'Solná / ceremoniální',tag:'04 / SOLNÁ SAUNA',text:'Velká kruhová ceremoniální sauna pod šindelovou střechou: tři soustředné řady lavic, centrální kamna s místem pro saunového mistra a podsvícená stěna ze solných bloků.',pos:[33,12,-23],target:[18,1,-39],point:[18,5,-39]},
  {name:'Odpočívárna',tag:'05 / ODPOČINEK',text:'Velká odpočívárna s 18 lehátky, prosklenými stěnami, zelenou střechou a širokou krytou terasou.',pos:[11,11,-12],target:[0,1,-29],point:[0,4,-29]},
  {name:'Ochlazení',tag:'06 / VODA',text:'Ochlazovací káď při centrální cestě. Odtud vedou samostatné pěšiny ke všem pavilonům.',pos:[9,4,8],target:[4.5,.5,2.7],point:[4.5,1.3,2.7]},
- {name:'Kamenný bazének',tag:'07 / VODNÍ ZAHRADA',text:'Oválný bazének s kamenným lemem, ve kterém se zrcadlí les. Od pergoly s 12 lehátky k němu vedou nášlapné kameny.',pos:[-5,14,34],target:[-19,0,20],point:[-19,1.5,20]},
+ {name:'Kamenný bazének',tag:'07 / VODNÍ ZAHRADA',text:'Přírodní koupací jezírko zapuštěné do louky, s kamenným lemem a rákosím. Z pergoly s 12 lehátky se k vodě schází po dřevěném molu.',pos:[-5,14,34],target:[-19,0,20],point:[-19,1.5,20]},
  {name:'U vody',tag:'08 / DRUHÁ ODPOČÍVÁRNA',text:'Vzdušná pergola porostlá zelení, s 12 lehátky a výhledem na hladinu, stranou od hlavního saunového okruhu.',pos:[-20,10,38],target:[-31,1,24],point:[-31,4,24]},
  {name:'Klinika',tag:'09 / KLINIKA',text:'Samostatná klinika na vzdáleném okraji území, propojená pěší cestou se saunovou zahradou. Architektonická studie recepce a vyšetřovacích křídel.',pos:[123,25,-46],target:[101,3,-70],point:[101,7,-70]},
- {name:'Vstup / odchod',tag:'10 / PŘÍSTUP',text:'Hlavní přístupová cesta pokračuje od centrálního rozcestí ven z areálu, volným průsekem mezi vzdálenými stromy.',pos:[12,14,30],target:[0,0,16],point:[0,1,17]},
+ {name:'Vstup / odchod',tag:'10 / PŘÍJEZD',text:'Od příjezdové cesty odbočuje pěšina k recepci se šatnami a sprchami. Odtud se bránou vychází na saunový okruh a stejnou cestou se vrací.',pos:[13,13,45],target:[-3,0,27],point:[0,1,20]},
  {name:'Potok',tag:'11 / POTOK',text:'Lesní potok napájí jezírko s dřevěným molem a lavičkou. Přes jeho odtok vede lávka na lesní stezku k odpočívárně.',pos:[-13,9,-9],target:[-27,0,-24],point:[-28.6,1.5,-20.6]}
 ]
 
@@ -116,7 +116,7 @@ const SNOWFALL_V=`uniform float uTime,uScale;varying float vA;void main(){vec3 b
 const SNOWFALL_F='uniform float uLight;varying float vA;void main(){float a=smoothstep(.5,.1,length(gl_PointCoord-.5))*vA*.9;gl_FragColor=vec4(vec3(uLight),a);}'
 // Light presets: sun position in degrees, sky scattering, lights, haze and exposure for each time of day and season.
 const MODES={
- day:{elev:26,az:-58,sky:[3.2,1.9,.0035,.8],sun:['#ffe2bf',3.1],hemi:['#cfe0ea','#4a4630',.45],env:.85,fog:['#aebcc0',.0021],exposure:.95,clouds:[1.5,.44,'#ffffff'],night:0,smoke:1.25,body:1},
+ day:{elev:26,az:-58,sky:[3.2,1.9,.0035,.8],sun:['#ffdcb0',3.4],hemi:['#cfe0ea','#4a4630',.38],env:.8,fog:['#aebcc0',.0021],exposure:.86,clouds:[1.5,.44,'#ffffff'],night:0,smoke:1.25,body:1},
  dusk:{elev:3.5,az:-100,sky:[6,2.8,.006,.92],sun:['#ff8f55',1.1],hemi:['#6f7fa8','#2b2622',.22],env:.5,fog:['#737a8c',.0024],exposure:1.3,clouds:[.8,.46,'#ffb08a'],night:1,smoke:.4,body:.35},
  winterDay:{elev:14,az:-40,sky:[10,1.1,.008,.78],sun:['#f3f5ff',2],hemi:['#dde7ef','#b9bec6',.55],env:.85,fog:['#c7cfd5',.0032],exposure:.68,clouds:[1.7,.34,'#ffffff'],night:0,smoke:1.2,body:.9},
  winterDusk:{elev:3,az:-100,sky:[7,2.4,.006,.9],sun:['#ff9c6e',.8],hemi:['#7483aa','#5a5f6c',.28],env:.5,fog:['#7a8193',.003],exposure:1.25,clouds:[.75,.38,'#ffb08a'],night:1,smoke:.45,body:.35}
@@ -241,7 +241,7 @@ export default function Sauna(){
  }
  const std=(color,o={})=>new T.MeshStandardMaterial({color,roughness:.8,...o})
  const col=hex=>({value:new T.Color(hex)})
- const wood=patch(std('#b8895a',{roughness:.72}),{color:WOOD,rough:'roughnessFactor=clamp(roughnessFactor+grain*.05+knot*.12,0.,1.);'})
+ const wood=patch(std('#a87644',{roughness:.72}),{color:WOOD,rough:'roughnessFactor=clamp(roughnessFactor+grain*.05+knot*.12,0.,1.);'})
  const charred=std('#222725',{roughness:.62}),steel=std('#2c302f',{metalness:.7,roughness:.42}),chrome=std('#b3bab9',{metalness:.9,roughness:.2}),metalRoof=std('#383d3c',{metalness:.55,roughness:.5})
  const rock=patch(std('#7b7f78',{roughness:.92}),{head:'uniform vec3 uMoss;',uniforms:{uMoss:col('#55602f')},color:'float rn=fbm(vWorld.xz*1.9+vWorld.y*1.3),rs=vnoise(vWorld.xz*13.+vWorld.y*9.);diffuseColor.rgb*=.6+.55*rn+.15*rs;float moss=smoothstep(.45,.85,vUpW)*smoothstep(.4,.62,fbm(vWorld.xz*2.4+4.));diffuseColor.rgb=mix(diffuseColor.rgb,uMoss*(.75+.5*rs),moss*.8);'})
  const saunaStone=patch(std('#4d4d4a',{roughness:.85}),{color:'diffuseColor.rgb*=.6+.7*vnoise(vWorld.xz*40.+vWorld.y*30.);'})
@@ -270,7 +270,8 @@ export default function Sauna(){
  const twig=patch(std('#4f433e',{roughness:.95}),{snowTop:false}),footprint=new T.MeshStandardMaterial({color:'#9aa6b4',roughness:1,transparent:true,opacity:.55,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2})
  const endgrain=patch(std('#c8a06a',{roughness:.9}),{color:'float rr=length(vLocal.yz);diffuseColor.rgb*=(.82+.12*sin(rr*38.+vnoise(vLocal.yz*6.)*3.))*mix(1.,.5,smoothstep(.86,.97,rr));'})
  const logBark=patch(std('#5b4a3a',{roughness:.95}),{color:'float gr=sin(atan(vLocal.z,vLocal.y)*14.+vnoise(vLocal.xz*vec2(12.,3.))*3.);diffuseColor.rgb*=.7+.3*smoothstep(-.5,.6,gr);'})
- const foliage=(hex,sway,up=.25)=>patch(std(hex,{vertexColors:true,side:T.DoubleSide,roughness:.88}),{snowTop:false,snowExtra:'snowAmt=uSnow*smoothstep(.62,.95,vUpW+(snowN-.5)*.7)*.85;',head:'uniform float uSway,uUp;',uniforms:{uSway:{value:sway},uUp:{value:up}},wind:TREE_WIND,normal:'normal=normalize(mix(normal,(viewMatrix*vec4(0.,1.,0.,0.)).xyz,uUp));',color:'float fl=vnoise(vec2(vWorld.x+vWorld.z,vWorld.y)*4.)*.5+vnoise(vec2(vWorld.x-vWorld.z,vWorld.y)*9.)*.5;diffuseColor.rgb*=(.88+.24*vnoise(vWorld.xz*.9+vWorld.y*.7))*(.74+.46*fl);'})
+ // cut>0 punches leaf-sized gaps into the crown shapes so trees and shrubs read as foliage, not as solid lumps.
+ const foliage=(hex,sway,up=.25,cut=0)=>patch(std(hex,{vertexColors:true,side:T.DoubleSide,roughness:.88}),{snowTop:false,snowExtra:'snowAmt=uSnow*smoothstep(.62,.95,vUpW+(snowN-.5)*.7)*.85;',head:'uniform float uSway,uUp,uCut;',uniforms:{uSway:{value:sway},uUp:{value:up},uCut:{value:cut}},wind:TREE_WIND,normal:'normal=normalize(mix(normal,(viewMatrix*vec4(0.,1.,0.,0.)).xyz,uUp));',color:'float fl=vnoise(vec2(vWorld.x+vWorld.z,vWorld.y)*4.)*.5+vnoise(vec2(vWorld.x-vWorld.z,vWorld.y)*9.)*.5;if(uCut>0.){float lf=vnoise(vec2(vWorld.x*6.+vWorld.y*2.5,vWorld.z*6.-vWorld.y*2.5))*.55+vnoise(vec2(vWorld.x-vWorld.z,vWorld.y*1.4)*15.)*.45;if(lf<uCut)discard;diffuseColor.rgb*=.72+.6*smoothstep(uCut,uCut+.3,lf);}diffuseColor.rgb*=(.88+.24*vnoise(vWorld.xz*.9+vWorld.y*.7))*(.74+.46*fl);'})
 
  function mesh(g,m,x,y,z,parent=scene){const o=new T.Mesh(g,m);o.position.set(x,y,z);o.castShadow=m!==glass;o.receiveShadow=true;parent.add(o);return o}
  const box=(w,h,d,m,x,y,z,p)=>mesh(new T.BoxGeometry(w,h,d),m,x,y,z,p)
@@ -320,7 +321,9 @@ export default function Sauna(){
  piers(-2.9,2.85,-2.1,4.5,-.08);piers(3.1,4.45,-1.8,1,-.08)
  for(const [w,d,x,z] of [[8.9,.45,.6,-2.55],[.45,7.6,-3.75,1.2]])box(w,.05,d,gravel,x,-.2,z)
  box(2.6,.24,2.6,concrete,4.35,-.11,2.7);for(let i=0;i<3;i++)for(const z of [4.9,6.5])box(.16,.35,.16,concrete,-.7+i*.72,-.075,z)
- for(let i=0;i<32;i++)box(.17,2.65,.16,i%4===0?charred:wood,-2.8+i*.18,1.43,-2,shell)
+ // Back wall with a long window above the backrest, looking into the trees.
+ for(let i=0;i<32;i++){const x=-2.8+i*.18,m=i%4===0?charred:wood;if(i<5||i>24)box(.17,2.65,.16,m,x,1.43,-2,shell);else{box(.17,1.5,.16,m,x,.855,-2,shell);box(.17,.3,.16,m,x,2.605,-2,shell)}}
+ box(3.6,.85,.025,glass,-.19,2.03,-2,shell);for(const y of [1.605,2.455])box(3.66,.05,.2,charred,-.19,y,-2,shell);for(const x of [-1.99,-.19,1.61])box(.05,.85,.2,charred,x,2.03,-2,shell)
  const roofUnder=z=>2.95+z*.0889
  for(let z=0;z<21;z++){const zz=-1.85+z*.18,h=roofUnder(zz)-.105;for(const x of [-2.88,2.88])box(.15,h,.17,wood,x,.105+h/2,zz,shell)}
  for(const x of [-2.8,0,2.8])box(.09,2.65,.1,charred,x,1.43,1.96)
@@ -347,7 +350,7 @@ export default function Sauna(){
  cyl(.13,.1,.22,wood,1.25,.64,-.38);for(const y of [.58,.7])mesh(new T.TorusGeometry(.12,.008,6,24),steel,1.25,y,-.38).rotation.x=Math.PI/2
  mesh(new T.CircleGeometry(.11,20),bucketWater,1.25,.73,-.38).rotation.x=-Math.PI/2
  const ladle=cyl(.012,.012,.5,wood,1.36,.86,-.36,scene,6);ladle.rotation.z=-.45;mesh(new T.SphereGeometry(.05,10,6,0,Math.PI*2,Math.PI/2,Math.PI/2),wood,1.22,.72,-.37)
- const dial=cyl(.09,.09,.025,wood,-1.5,2.05,-1.905,shell,24);dial.rotation.x=Math.PI/2;const face=cyl(.072,.072,.03,linen,-1.5,2.05,-1.9,shell,24);face.rotation.x=Math.PI/2;box(.005,.06,.004,charred,-1.5,2.07,-1.884,shell)
+ const dial=cyl(.09,.09,.025,wood,-2.28,2.05,-1.905,shell,24);dial.rotation.x=Math.PI/2;const face=cyl(.072,.072,.03,linen,-2.28,2.05,-1.9,shell,24);face.rotation.x=Math.PI/2;box(.005,.06,.004,charred,-2.28,2.07,-1.884,shell)
  box(.12,.22,.12,lampGlow,-2.62,2.25,-1.74,shell);for(let i=0;i<5;i++)box(.025,.3,.02,wood,-2.7+i*.04,2.25,-1.66,shell)
  box(.55,.05,.38,towels[2],-1.5,.955,-1.15);box(.5,.05,.36,towels[0],.4,.955,-1.1)
  person('sit',-1.5,.525,-.95,0,{S:.4});person('sit',.4,.525,-.95,0,{S:.4,robe:robes[0]});person('stand',2.7,.08,3.6,Math.PI/2,{robe:robes[0]});person('bathe',4.5,0,2.7,-Math.PI/2,{W:.91});pools.push([.5,3.4,4,.1])
@@ -454,7 +457,7 @@ export default function Sauna(){
  ceremonyBuilding.position.set(18,0,-39);ceremonyBuilding.rotation.y=Math.PI*.73;
  scene.updateMatrixWorld(true);for(const s of [-1,1]){const a=s*.62,q=ceremonyBuilding.localToWorld(new T.Vector3(Math.sin(a)*5.6,0,Math.cos(a)*5.6));pools.push([q.x,q.z,2.6])}{const q=herbalBuilding.localToWorld(new T.Vector3(1,0,3));pools.push([q.x,q.z,4])}
  // ——— Forest stream feeding a pond; the forest trail crosses its outflow on a footbridge ———
- const pond={x:-28.6,z:-20.6,rx:4.4,rz:3.1},wobble=a=>1+.07*Math.sin(3*a)+.05*Math.sin(5*a+1),toCurve=pts=>new T.CatmullRomCurve3(pts.map(([x,z])=>new T.Vector3(x,0,z)))
+ const poolX=-19,poolZ=20,poolLevel=-.3,pond={x:-28.6,z:-20.6,rx:4.4,rz:3.1},wobble=a=>1+.07*Math.sin(3*a)+.05*Math.sin(5*a+1),toCurve=pts=>new T.CatmullRomCurve3(pts.map(([x,z])=>new T.Vector3(x,0,z)))
  const inlet=toCurve([[-64,-37],[-55,-31],[-46,-27],[-38,-24],[-32.8,-21.8]]),outlet=toCurve([[-25.4,-23],[-25,-28.5],[-24.2,-34],[-22.8,-42],[-21.2,-52],[-20,-64]])
  const streamPts=[...inlet.getSpacedPoints(90),...outlet.getSpacedPoints(110)],streamDist=(x,z)=>{let m=1e9;for(const q of streamPts)m=Math.min(m,Math.hypot(q.x-x,q.z-z));return m}
  function channel(curve,n){const prof=[[-1.5,-.03],[-1.05,-.2],[-.5,-.36],[0,-.4],[.5,-.36],[1.05,-.2],[1.5,-.03]],pos=[],idx=[],wpos=[],wuv=[],wnor=[],widx=[],pts=curve.getSpacedPoints(n);let along=0
@@ -479,19 +482,21 @@ export default function Sauna(){
  {const c=document.createElement('canvas');c.width=c.height=1024;const g=c.getContext('2d'),sc=1024/(2*MASK.R),px=(x,z)=>[(x-MASK.cx+MASK.R)*sc,(MASK.cz+MASK.R-z)*sc];g.fillStyle='#000';g.fillRect(0,0,1024,1024);g.strokeStyle=g.fillStyle='#fff';g.lineCap=g.lineJoin='round';g.lineWidth=2.6*sc
   for(const cv of [inlet,outlet]){g.beginPath();cv.getSpacedPoints(160).forEach((q,i)=>g[i?'lineTo':'moveTo'](...px(q.x,q.z)));g.stroke()}
   g.beginPath();for(let i=0;i<=72;i++){const a=i/72*Math.PI*2,w=wobble(a)*1.02;g[i?'lineTo':'moveTo'](...px(pond.x+Math.cos(a)*pond.rx*w,pond.z+Math.sin(a)*pond.rz*w))}g.fill()
+  g.beginPath();g.ellipse(...px(poolX,poolZ),5.75*sc,4.05*sc,0,0,Math.PI*2);g.fill()
   holeTexture=new T.CanvasTexture(c);holeTexture.flipY=false;groundU.uHole.value=holeTexture}
 
  const pathSegs=[];let pathId=0
  function path(points,width=1.35,{skip}={}){const id=pathId++;for(let i=1;i<points.length;i++){const [x,z]=points[i-1],[nx,nz]=points[i];if(skip&&skip((x+nx)/2,(z+nz)/2))continue;const length=Math.hypot(nx-x,nz-z);const strip=box(width,.06,length,gravel,(x+nx)/2,-.15,(z+nz)/2);strip.rotation.y=Math.atan2(nx-x,nz-z);mesh(new T.CylinderGeometry(width/2,width/2,.06,24),gravel,x,-.15,z);pathSegs.push([x,z,nx,nz,width,id])}}
  // Smooth paths skirt the gardens, with comfortable open lawns between buildings.
- function curved(points,width=1.65,opts){const curve=toCurve(points),pts=curve.getPoints(70).map(v=>[v.x,v.z]);path(pts,width,opts);return pts}
- const entryPath=curved([[0,73],[0,40],[0,20],[0,8],[0,5]],2.4);
+ function curved(points,width=1.4,opts){const curve=toCurve(points),pts=curve.getPoints(70).map(v=>[v.x,v.z]);path(pts,width,opts);return pts}
+ const entryPath=curved([[0,73],[0,40],[0,20],[0,8],[0,5]],1.9);
  const westPath=curved([[0,8],[-11,12],[-25,13],[-38,8],[-39.5,2.7]]);
  const eastPath=curved([[0,8],[16,4],[32,-12],[30,-29],[21.75,-42.3]]);
- const innerPath=curved([[-25,13],[-22,-6],[-14,-18],[0,-22.5]],2);
- const southPath=curved([[30,-29],[26,-26],[14,-22],[0,-22.5]],2);
- curved([[0,20],[-7,21],[-12,25],[-19,28]],2);
- curved([[-19,28],[-24,31],[-31,29]],2);
+ const innerPath=curved([[-25,13],[-22,-6],[-14,-18],[0,-22.5]],1.5);
+ const southPath=curved([[30,-29],[26,-26],[14,-22],[0,-22.5]],1.5);
+ curved([[0,20],[-7,21],[-12,25],[-19,28]],1.4);
+ curved([[-19,28],[-24,31],[-31,29]],1.4);
+ path([[0,34],[-3.2,34]],1.3);
  path([[0,5],[4.5,5],[4.5,3.7]],1);
  curved([[0,20],[6,20],[9,18]],1.5);
  curved([[6,20],[10,23],[12,24]],1.5);
@@ -541,7 +546,8 @@ export default function Sauna(){
   for(let i=0;i<cols;i++)for(let j=0;j<rows;j++){lounger(cx+(i-(cols-1)/2)*1.65,cz+(j-(rows-1)/2)*3,i+j);if(i<cols-1&&(i+j)%2===0){const tx=cx+(i-(cols-1)/2)*1.65+.82,tz=cz+(j-(rows-1)/2)*3-.3;cyl(.19,.19,.03,wood,tx,.5,tz,scene,20);cyl(.025,.025,.48,charred,tx,.25,tz,scene,6);cyl(.04,.035,.08,towels[2],tx+.06,.555,tz,scene,10)}}
   for(const dx of [-w/2+.3,w/2-.3])for(const dz of [-d/2+.3,0,d/2+.3])box(.16,3.5,.16,wood,cx+dx,1.75,cz+dz);
   for(const [dx,dz] of [[-w/2+.7,d/2+1.4],[w/2-.7,d/2+1.4]])potPlant(cx+dx,cz+dz,1.1)
-  if(enclosed){box(w,.2,d+2,charred,cx,3.6,cz+.5,roof);box(w-.3,.08,d+1.7,sedum,cx,3.73,cz+.5,roof);for(const s of [-1,1]){box(w+.1,.34,.08,wood,cx,3.68,cz+.5+s*(d/2+1.04),roof);box(.08,.34,d+2.1,wood,cx+s*(w/2+.04),3.68,cz+.5,roof)}
+  if(enclosed){box(w,.2,d+2,charred,cx,3.6,cz+.5,roof);for(let i=0;i<Math.round((w-.2)/.3);i++)box(.27,.04,d+1.8,wood,cx-w/2+.25+i*.3,3.48,cz+.5,roof)
+   {const fx=cx+3.3,fz=cz+d/2-.75;cyl(.36,.36,.72,steel,fx,.78,fz,scene,24);cyl(.07,.2,.42,steel,fx,.21,fz,scene,12);box(.36,.28,.02,fire,fx,.78,fz+.36);cyl(.085,.085,2.36,steel,fx,2.3,fz,roof,12);for(let i=0;i<5;i++)cyl(.06,.06,.4,logBark,fx-.75,.17+Math.floor(i/3)*.12,fz-.14+(i%3)*.13,scene,8).rotation.z=Math.PI/2}box(w-.3,.08,d+1.7,sedum,cx,3.73,cz+.5,roof);for(const s of [-1,1]){box(w+.1,.34,.08,wood,cx,3.68,cz+.5+s*(d/2+1.04),roof);box(.08,.34,d+2.1,wood,cx+s*(w/2+.04),3.68,cz+.5,roof)}
    box(w,3.2,.025,glass,cx,1.7,cz-d/2,roof);for(const dx of [-w/2,w/2])box(.025,3.2,d,glass,cx+dx,1.7,cz,roof);
    const n=Math.round(w/1.6);for(let i=0;i<=n;i++)box(.05,3.2,.06,charred,cx-w/2+i*w/n,1.7,cz-d/2,roof);for(const dx of [-w/2,w/2])for(let i=1;i<7;i++)box(.06,3.2,.05,charred,cx+dx,1.7,cz-d/2+i*d/7,roof)
    for(let i=0;i<cols;i+=2)for(let j=0;j<rows;j++){const lx=cx+(i-(cols-1)/2+.5)*1.65,lz=cz+(j-(rows-1)/2)*3;cyl(.006,.006,.7,charred,lx,3.15,lz,roof,4);mesh(new T.CylinderGeometry(.09,.2,.2,20,1,true),lampShade,lx,2.72,lz,roof);mesh(new T.SphereGeometry(.06,10,8),lampGlow,lx,2.66,lz,roof)}}
@@ -557,17 +563,19 @@ export default function Sauna(){
  person('lie',-2.475,0,-32,0);person('lie',2.475,0,-26,0,{robe:robes[1]});person('lie',-33.475,0,24,0,{robe:robes[0]})
  const loungeLight=new T.PointLight(0xffc98a,0,14,2),pergolaLight=new T.PointLight(0xffc27a,0,10,2),fireLight=new T.PointLight(0xff7a30,1.5,9,2);loungeLight.position.set(0,2.7,-29);pergolaLight.position.set(-31,3,24);fireLight.position.set(12,1.1,27);scene.add(loungeLight,pergolaLight,fireLight)
  pools.push([0,-21.8,5,.13],[-31,24,5.5,.13],[12,27,5,-.06])
- // Raised stone basin: the water reads deeper toward the centre, reeds and boulders on the far side.
- const poolX=-19,poolZ=20;
- const poolWall=mesh(new T.CylinderGeometry(1,1,.65,96),paving,poolX,.05,poolZ);poolWall.scale.set(6,1,4.3);
- const poolSurface=keep(mesh(new T.CircleGeometry(1,128),water,poolX,.4,poolZ));poolSurface.rotation.x=-Math.PI/2;poolSurface.scale.set(5.55,3.85,1);poolSurface.castShadow=false;
- for(let i=0;i<56;i++){const a=i/56*Math.PI*2;const block=box(.62,.2,.54,coping,poolX+5.82*Math.cos(a),.45,poolZ+4.08*Math.sin(a));block.rotation.y=-a;}
- for(let i=0;i<17;i++){const a=Math.PI*.07+i/17*Math.PI*.88;rockAt(poolX+6.5*Math.cos(a),.2,poolZ-5*Math.sin(a),.5+(i%3)*.18)}
- for(let i=0;i<3;i++)box(2.1,.16,.6,coping,poolX,.08+i*.12,poolZ+5.5-i*.5);
- const iceSheet=keep(mesh(new T.CircleGeometry(1,96),ice,poolX,.42,poolZ));iceSheet.rotation.x=-Math.PI/2;iceSheet.scale.set(5.62,3.9,1);iceSheet.castShadow=false;winterOnly.push(iceSheet)
- person('bathe',poolX+1.39,0,poolZ+2.12,Math.PI*.8,{W:.4})
+ // Natural swimming pool set into the ground: flush stone rim, a timber deck from the pergola, reeds and boulders on the far side.
+ const basin=mesh(new T.CylinderGeometry(1,.9,1.3,96,1,true),std('#56605b',{side:T.DoubleSide,roughness:.9}),poolX,-.84,poolZ);basin.scale.set(5.72,1,4.02);basin.castShadow=false
+ const poolSurface=keep(mesh(new T.CircleGeometry(1,128),water,poolX,poolLevel,poolZ));poolSurface.rotation.x=-Math.PI/2;poolSurface.scale.set(5.6,3.9,1);poolSurface.castShadow=false;
+ for(let i=0;i<56;i++){const a=i/56*Math.PI*2;if(Math.cos(a)<-.78)continue;const block=box(.66,.12,.5+(i%3)*.08,coping,poolX+5.98*Math.cos(a),-.2,poolZ+4.26*Math.sin(a));block.rotation.y=-a;}
+ for(let i=0;i<17;i++){const a=Math.PI*.07+i/17*Math.PI*.88;rockAt(poolX+6.6*Math.cos(a),-.1,poolZ-5*Math.sin(a),.4+(i%3)*.18)}
+ for(let i=0;i<3;i++)box(2.1,.14,.6,coping,poolX,-.24-i*.15,poolZ+4.35-i*.45);
+ for(let i=0;i<20;i++)box(.15,.05,5.6,wood,-26.62+i*.165,.085,20.25);for(const z of [17.7,20.25,22.8]){box(3.3,.14,.1,charred,-25.05,-.01,z);for(const x of [-26.4,-23.75])box(.12,1.1,.12,wood,x,-.62,z)}
+ for(const z of [19.9,20.6]){cyl(.022,.022,1.5,chrome,-23.42,-.2,z,scene,8);box(.3,.03,.03,chrome,-23.56,.55,z)}for(const y of [-.45,-.15])box(.04,.03,.7,chrome,-23.42,y,20.25)
+ box(.6,.05,.4,towels[2],-26.1,.14,18.2);box(.55,.05,.38,towels[0],-26.05,.14,22.3)
+ const iceSheet=keep(mesh(new T.CircleGeometry(1,96),ice,poolX,poolLevel+.02,poolZ));iceSheet.rotation.x=-Math.PI/2;iceSheet.scale.set(5.62,3.9,1);iceSheet.castShadow=false;winterOnly.push(iceSheet)
+ person('bathe',poolX+1.39,poolLevel-.4,poolZ+2.12,Math.PI*.8,{W:.4})
  for(const [x,z] of [[-26.2,27.4],[-24.8,27.1],[-23.3,26.8],[-21.8,26.4],[-20.4,26.1]]){const st=mesh(rockGeos[Math.floor(rand()*6)],paving,x,-.2,z);st.scale.set(.42,.1,.34);st.rotation.y=rand()*3}
- {const reeds=[];for(let i=0;i<70;i++){const a=Math.PI*.12+rand()*Math.PI*.76,rr=6.9+rand()*1.4;reeds.push([poolX+rr*Math.cos(a),-.2,poolZ-rr*.78*Math.sin(a),.6+rand()*.5,1.1+rand()*.7])}tufts(reeds,reedMat)}
+ {const reeds=[];for(let i=0;i<110;i++){const a=Math.PI*.1+rand()*Math.PI*.8,rr=6.25+rand()*1.5;reeds.push([poolX+rr*Math.cos(a),-.2,poolZ-rr*.74*Math.sin(a),.6+rand()*.5,1.1+rand()*.8])}tufts(reeds,reedMat)}
  // Rocks along the clearing edge, half sunk into the ground.
  for(let i=0;i<70;i++){const x=(rand()-.5)*36,z=(rand()-.5)*36;if(Math.abs(x)<19&&Math.abs(z)<22)continue;rockAt(x,-.1,z,.2+rand()*.45)}
  for(let i=0;i<34;i++){const a=rand()*Math.PI*2,r=49+rand()*9;rockAt(Math.cos(a)*r,-.2,Math.sin(a)*r,.5+rand()*.9)}
@@ -577,6 +585,32 @@ export default function Sauna(){
  function sign(text,x,z,{y=2.35,w=3.1,h=.58,posts=true,parent=scene}={}){const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=Math.round(1024*h/w);const ctx=canvas.getContext('2d'),H=canvas.height;ctx.fillStyle='#1c392f';ctx.fillRect(0,0,1024,H);ctx.strokeStyle='#b9a676';ctx.lineWidth=3;ctx.strokeRect(12,12,1000,H-24);ctx.fillStyle='#efe6cc';ctx.font=`${Math.round(H*.4)}px Georgia, serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.letterSpacing='6px';ctx.fillText(text,512,H/2+2);const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=8;labels.push(texture);const label=keep(mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:texture,side:T.DoubleSide}),x,y,z,parent));label.castShadow=false;box(w+.08,h+.08,.04,charred,x,y,z-.03,parent);if(posts)for(const s of [-1,1])box(.09,y+h/2+.1,.09,wood,x+s*(w/2-.2),(y+h/2+.1)/2-.1,z-.08)}
  sign('FINSKÁ',0,2.02,{y:2.95,w:1.9,h:.3,posts:false,parent:shell});sign('HERBAL · L',-39,4);sign('CEREMONIÁLNÍ',22,-42);sign('ODPOČÍVÁRNA · 18 MÍST',0,-21.9,{y:1.3});sign('U VODY · 12 MÍST',-31,30,{y:1.3});
  sign('VSTUP / ODCHOD',0,20,{posts:false});for(const x of [-1.4,1.4])box(.08,2.6,.08,wood,x,1.15,20);
+ // Arrival pavilion beside the entry path: reception desk, lockers and benches behind a glazed front with a deep porch.
+ {const ax=-7.5,az=34,cover=new T.Group();scene.add(cover);roofs.push(cover)
+  box(7.4,.18,8.6,wood,ax+.6,0,az);piers(ax-2.4,ax+4.1,az-4,az+4,-.09)
+  for(let i=0;i<45;i++)box(.14,2.9,.17,i%5===0?charred:wood,ax-2.6,1.55,az-3.96+i*.18,cover)
+  for(const sz of [-4,4])for(let i=0;i<29;i++)box(.17,2.9,.14,wood,ax-2.52+i*.18,1.55,az+sz,cover)
+  box(.025,2.8,5.6,glass,ax+2.6,1.5,az-1.2,cover);for(let i=0;i<=4;i++)box(.06,2.8,.05,charred,ax+2.6,1.5,az-4+i*1.4,cover);box(.06,2.8,.05,charred,ax+2.6,1.5,az+2.6,cover)
+  for(let i=0;i<8;i++)box(.14,2.9,.17,wood,ax+2.6,1.55,az+2.72+i*.18,cover);box(.05,2.1,.95,wood,ax+3.02,1.14,az+2.25).rotation.y=-1.1
+  greenRoof(7.6,8.8,ax+.7,3.1,az,cover);for(const sz of [-3.9,3.9])box(.14,3,.14,charred,ax+4.2,1.5,az+sz)
+  box(.7,1.05,2.4,wood,ax+.9,.6,az-2.2);box(.8,.05,2.5,paving,ax+.9,1.14,az-2.2);box(.3,.22,.02,charred,ax+.9,1.3,az-2.7)
+  box(.5,2,5.4,charred,ax-2.2,1.1,az+1);for(let i=0;i<=10;i++)box(.02,1.9,.02,wood,ax-1.94,1.1,az-1.6+i*.52)
+  box(.45,.06,3.4,wood,ax-.5,.5,az+1.4);for(const dz of [-1.4,1.4])box(.36,.4,.06,charred,ax-.5,.29,az+1.4+dz)
+  box(.4,.05,1.7,wood,ax-2.25,1.5,az-2.9);for(let i=0;i<5;i++)cyl(.075,.075,.36,towels[i%3],ax-2.25,1.6,az-3.5+i*.3,scene,10).rotation.z=Math.PI/2
+  for(const dz of [-1.8,1.8]){cyl(.006,.006,.5,charred,ax,2.75,az+dz,cover,4);mesh(new T.SphereGeometry(.07,10,8),lampGlow,ax,2.48,az+dz,cover)}
+  box(.45,.07,2.2,wood,ax+3.7,.5,az-2.5);for(const dz of [-.9,.9])box(.36,.4,.06,charred,ax+3.7,.29,az-2.5+dz)
+  potPlant(ax+3.9,az+3.3,1.1);potPlant(ax+3.9,az-3.75,.9);person('stand',ax+3.5,.09,az+.6,Math.PI/2,{robe:robes[1]});pools.push([ax+4,az,5,.13])
+  sign('RECEPCE · ŠATNY',-3.4,30.4,{y:1.3,w:2.5,h:.44})}
+ // Cold water within a few steps of every sauna: a stave tub and an open-air shower on a stone pad.
+ function coldSpot(x,z,ry){const g=new T.Group();g.position.set(x,0,z);g.rotation.y=ry;scene.add(g)
+  cyl(1.75,1.8,.1,paving,.5,-.17,0,g,40);mesh(new T.CylinderGeometry(.74,.7,.9,40,1,true),std('#245855',{side:T.DoubleSide}),0,.35,0,g)
+  for(let i=0;i<36;i++){const a=i/36*Math.PI*2;box(.132,.98,.085,wood,Math.sin(a)*.78,.37,Math.cos(a)*.78,g).rotation.y=a}
+  for(const y of [.1,.68])mesh(new T.TorusGeometry(.83,.022,8,40),steel,0,y,0,g).rotation.x=Math.PI/2
+  const w=keep(mesh(new T.CircleGeometry(.74,48),water,0,.76,0,g));w.rotation.x=-Math.PI/2;w.castShadow=false
+  box(.6,.22,.3,wood,0,-.02,1.02,g);box(.6,.44,.26,wood,0,.1,.78,g)
+  cyl(.03,.03,2.3,chrome,1.75,1.0,-.2,g,10);box(.5,.035,.035,chrome,1.52,2.15,-.2,g);cyl(.14,.14,.03,chrome,1.3,2.12,-.2,g,18);for(let i=0;i<6;i++)box(.9,.03,.1,wood,1.3,-.1,-.5+i*.13,g)
+  for(let i=1;i<=3;i++){const st=mesh(rockGeos[i],paving,.5,-.2,2+i*.75,g);st.scale.set(.4,.09,.3);st.rotation.y=i}}
+ coldSpot(-30.6,7.2,2.2);coldSpot(13.2,-46.2,-.5)
  // A separate clinical campus, beyond the retreat and its forest edge.
  const clinic=new T.Group();scene.add(clinic);clinic.position.set(101,0,-70);clinic.rotation.y=-.22;
  box(34,.3,22,paving,0,0,2,clinic);box(34.4,.2,22.4,concrete,0,-.2,2,clinic);
@@ -592,7 +626,7 @@ export default function Sauna(){
  for(let i=0;i<8;i++)box(.12,3.8,.13,wood,-13+i*.9,2,12.6,clinic);
  const reflecting=keep(mesh(new T.CircleGeometry(1,64),water,10,.19,9,clinic));reflecting.rotation.x=-Math.PI/2;reflecting.scale.set(3.4,2,1);reflecting.castShadow=false;box(7.1,.14,4.3,coping,10,.1,9,clinic)
  for(const [x,z] of [[-3.5,8],[0,8.5],[15.5,4]])box(1.8,.1,.5,wood,x,.45,z,clinic)
- const clinicPath=curved([[30,-29],[45,-31],[67,-43],[83,-52],[101,-59]],2.6);
+ const clinicPath=curved([[30,-29],[45,-31],[67,-43],[83,-52],[101,-59]],1.9);
  person('walk',98.5,-.12,-57.9,2.45);scene.updateMatrixWorld(true);{const q=clinic.localToWorld(new T.Vector3(2,0,6.5));pools.push([q.x,q.z,5,.17])}
  // Low stone edging on both sides of every path, left out where paths meet.
  const nearPath=(x,z,id,m)=>pathSegs.some(([ax,az,bx,bz,w,j])=>j!==id&&segDist(x,z,ax,az,bx,bz)<w/2+m)
@@ -600,7 +634,7 @@ export default function Sauna(){
  // Path lights every few metres, alternating sides.
  function bollard(x,z){box(.1,.7,.1,charred,x,.13,z);box(.16,.08,.16,led,x,.5,z);pools.push([x,z,2.2])}
  function lightsAlong(pts,w,every){let acc=0,next=4,n=0;const total=pts.reduce((t,q,i)=>i?t+Math.hypot(q[0]-pts[i-1][0],q[1]-pts[i-1][1]):0,0);for(let i=1;i<pts.length;i++){const [x0,z0]=pts[i-1],[x1,z1]=pts[i],l=Math.hypot(x1-x0,z1-z0);while(acc+l>=next&&next<total-4){const t=(next-acc)/l,sd=n++%2?1:-1,bx=x0+(x1-x0)*t-(z1-z0)/l*sd*(w/2+.45),bz=z0+(z1-z0)*t+(x1-x0)/l*sd*(w/2+.45);if(!nearPath(bx,bz,-1,.3)&&streamDist(bx,bz)>2.2)bollard(bx,bz);next+=every}acc+=l}}
- for(const [pts,w] of [[westPath,1.65],[eastPath,1.65],[innerPath,2],[southPath,2],[trail,1.4]])lightsAlong(pts,w,11);lightsAlong(clinicPath,2.6,16)
+ for(const [pts,w] of [[westPath,1.4],[eastPath,1.4],[innerPath,1.5],[southPath,1.5],[trail,1.4]])lightsAlong(pts,w,11);lightsAlong(clinicPath,1.9,16)
  sign('AEVUM · KLINIKA',102,-60);
  // Broad irregular mountain ridge with layered foothills, forest below the tree line and bare rock above.
  const peaks=[[-125,-30,65,64,53],[-25,-5,115,66,62],[82,-18,80,62,50],[170,-36,48,54,44]]
@@ -648,23 +682,23 @@ export default function Sauna(){
  const d=new T.Object3D()
  function instanced(geo,mat,list,{cast=false,tint}={}){const im=new T.InstancedMesh(geo,mat,Math.max(1,list.length));list.forEach(([x,y,z,sx,sy,sz,ry],i)=>{d.position.set(x,y,z);d.rotation.set(0,ry??rand()*6.28,0);d.scale.set(sx,sy??sx,sz??sx);d.updateMatrix();im.setMatrixAt(i,d.matrix);im.setColorAt(i,tint?tint(i):new T.Color().setScalar(.85+rand()*.3))});im.count=list.length;im.castShadow=cast;im.receiveShadow=true;scene.add(im);return im}
  const grassMat=patch(std('#5b7a37',{side:T.DoubleSide,roughness:.85}),{head:MEADOW+'varying float vH;varying vec2 vBase;uniform float uSway;',uniforms:{uLush:groundU.uLush,uDry:groundU.uDry,uDeep:groundU.uDeep,uSway:{value:.14}},vertex:'vH=uv.y;vBase=(modelMatrix*instanceMatrix*vec4(0.,0.,0.,1.)).xz;transformed*=(1.-smoothstep(40.,60.,distance(cameraPosition,vec3(vBase.x,0.,vBase.y))))*(1.-uSnow*.85);',snow:false,wind:GRASS_WIND,normal:UP_NORMAL,color:'vec3 gc=mix(meadow(vBase),vec3(.5,.45,.3),uSnow*.7);gc=mix(gc,uDry*1.15,vH*vH*.4);diffuseColor.rgb=gc*mix(.4,1.15,vH)*vColor;'})
- {const hot=[[0,1],[-34,2],[18,-39],[0,-29],[4.5,2.7],[-19,20],[-31,24],[10,20],[101,-70,26],[-8,-20],[12,27],[0,14],[-24,-6],[20,-14]],grass=[],per=low?900:4600
-  const add=(x,z)=>{if(!clearAround(x,z,.25))return;const tall=fbmLike(x,z);grass.push([x,groundY(x,z),z,.22+tall*.32+rand()*.08])}
+ {const hot=[[0,1],[-7.5,34],[-34,2],[18,-39],[0,-29],[4.5,2.7],[-19,20],[-31,24],[10,20],[101,-70,26],[-8,-20],[12,27],[0,14],[-24,-6],[20,-14]],grass=[],per=low?900:4600
+  const add=(x,z)=>{if(!clearAround(x,z,.25))return;const tall=fbmLike(x,z);grass.push([x,groundY(x,z),z,.26+tall*.5+rand()*.1])}
   const fbmLike=(x,z)=>noise.noise(x*.08,z*.08,6)*.5+.5
   for(const [hx,hz,hr=15] of hot)for(let i=0;i<per;i++){const a=rand()*Math.PI*2,r=Math.sqrt(rand())*hr;add(hx+Math.cos(a)*r,hz+Math.sin(a)*r)}
   for(let i=0;i<(low?4000:16000);i++){const a=rand()*Math.PI*2,r=Math.sqrt(rand())*64;add(Math.cos(a)*r,Math.sin(a)*r)}
   instanced(tuftGeo,grassMat,grass).userData.noReflect=true
   // Flowers cluster in drifts where the meadow is left longer.
   const flowerGeo=(()=>{const stem=new T.CylinderGeometry(.006,.008,1,3);stem.translate(0,.5,0);const head=new T.IcosahedronGeometry(.07,0);head.translate(0,1,0);const parts=[stem,head].map((g,k)=>{g.deleteAttribute('uv');const c=[];for(let i=0;i<g.attributes.position.count;i++)k?c.push(1,1,1):c.push(.3,.45,.2);g.setAttribute('color',new T.Float32BufferAttribute(c,3));return g.index?g.toNonIndexed():g});return mergeGeometries(parts)})()
-  const flowers=[],hues=['#f4f1e6','#f1d45a','#9b7fd0','#e9e3f5','#d9774e'];for(let i=0;i<(low?800:3200);i++){const a=rand()*Math.PI*2,r=14+Math.sqrt(rand())*50,x=Math.cos(a)*r,z=Math.sin(a)*r;if(noise.noise(x*.07,z*.07,2)<.05||!clearAround(x,z,.3))continue;flowers.push([x,groundY(x,z),z,.28+rand()*.18])}
+  const flowers=[],hues=['#f4f1e6','#f1d45a','#9b7fd0','#e9e3f5','#d9774e'];for(let i=0;i<(low?1200:5200);i++){const a=rand()*Math.PI*2,r=10+Math.sqrt(rand())*54,x=Math.cos(a)*r,z=Math.sin(a)*r;if(noise.noise(x*.07,z*.07,2)<.05||!clearAround(x,z,.3))continue;flowers.push([x,groundY(x,z),z,.28+rand()*.18])}
   const fl=instanced(flowerGeo,foliage('#ffffff',.05,.6),flowers,{tint:()=>new T.Color(hues[Math.floor(rand()*hues.length)])});fl.userData.noReflect=true;summerOnly.push(fl)}
  // Ferns and bilberry-like undergrowth fill the forest edge.
  const fernGeo=(()=>{const pos=[],nor=[],colr=[],idx=[];for(let f=0;f<7;f++){const a=f/7*Math.PI*2+rand()*.4,L=.8+rand()*.3,ca=Math.cos(a),sa=Math.sin(a),base=pos.length/3;for(let s=0;s<=10;s++){const t=s/10,hr=t*L*.9,y=Math.sin(t*2.2)*.45*L-t*t*.3,w=.13*Math.sin(Math.PI*Math.min(1,t*1.1))*(s%2?1:.55);pos.push(ca*hr-sa*w,y,sa*hr+ca*w,ca*hr+sa*w,y,sa*hr-ca*w);nor.push(0,1,0,0,1,0);const c=.55+t*.5;colr.push(c,c,c,c,c,c);if(s<10){const i=base+s*2;idx.push(i,i+1,i+2,i+1,i+3,i+2)}}}const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(pos,3));g.setAttribute('normal',new T.Float32BufferAttribute(nor,3));g.setAttribute('color',new T.Float32BufferAttribute(colr,3));g.setIndex(idx);return g})()
  {const ferns=[],bushes=[];for(let i=0;i<(low?500:1800);i++){const a=rand()*Math.PI*2,r=47+rand()*40,x=Math.cos(a)*r,z=Math.sin(a)*r;if(!clearAround(x,z,.8)||Math.hypot(x-101,z+70)<40)continue;const y=groundY(x,z);if(noise.noise(x*.1,z*.1,9)>0)ferns.push([x,y,z,.7+rand()*.6]);else{const s=.35+rand()*.45;bushes.push([x,y+s*.25,z,s,s*.6,s])}}
-  const fe=instanced(fernGeo,foliage('#4e7a33',.08,.8),ferns);fe.userData.noReflect=true;summerOnly.push(fe);instanced(shade(blob(1,.35,11)),foliage('#34502a',.03),bushes,{cast:true})}
+  const fe=instanced(fernGeo,foliage('#4e7a33',.08,.8),ferns);fe.userData.noReflect=true;summerOnly.push(fe);instanced(shade(blob(1,.35,11)),foliage('#34502a',.03,.25,.36),bushes,{cast:true})}
  // Planting islands in the clearing: shrubs with a few flowering grasses.
- {const list=[],grasses=[];for(const [gx,gz] of [[-13,-4],[12,-5],[-12,-23],[13,-24],[-26,14],[-9,29]])for(let i=0;i<16;i++){const a=i*2.399,r=Math.sqrt(i)*.5;list.push([gx+Math.cos(a)*r,.15,gz+Math.sin(a)*r,.55+(i%3)*.1,.38+(i%3)*.13,.55+(i%3)*.1]);grasses.push([gx+Math.cos(a+1)*(r+.9),-.2,gz+Math.sin(a+1)*(r+.9),.7+rand()*.3,1+rand()*.5])}
-  instanced(shade(blob(1,.3,13)),foliage('#5a7340',.03),list,{cast:true});tufts(grasses,reedMat)}
+ {const list=[],grasses=[];for(const [gx,gz] of [[-13,-4],[12,-5],[-12,-23],[13,-24],[-26,14],[6,36]])for(let i=0;i<16;i++){const a=i*2.399,r=Math.sqrt(i)*.5;list.push([gx+Math.cos(a)*r,.15,gz+Math.sin(a)*r,.55+(i%3)*.1,.38+(i%3)*.13,.55+(i%3)*.1]);grasses.push([gx+Math.cos(a+1)*(r+.9),-.2,gz+Math.sin(a+1)*(r+.9),.7+rand()*.3,1+rand()*.5])}
+  instanced(shade(blob(1,.3,13)),foliage('#4f6a3a',.03,.25,.36),list,{cast:true});tufts(grasses,reedMat)}
  // Mixed forest: Norway spruce, Scots pine and birches at the sunny edge; built in unit height and instanced.
  function spruceGeo(detail){const tiers=detail?16:10,parts=[];for(let j=0;j<tiers;j++){const t=j/(tiers-1),y=.1+t*.87,r=Math.pow(1-t,.85)*.2+.025,h=r*1.15+.05,g=new T.ConeGeometry(r,h,detail?18:9,detail?3:2,true),p=g.attributes.position,c=[],ph=rand()*6,ph2=rand()*6;g.deleteAttribute('uv')
    for(let i=0;i<p.count;i++){let x=p.getX(i),yy=p.getY(i),z=p.getZ(i);const k=Math.hypot(x,z)/r,a=Math.atan2(z,x),jag=1+(.28*Math.sin(a*5+ph)+.14*Math.sin(a*11+ph2)+(detail?.1*Math.sin(a*17+ph):0)+.3*noise.noise(Math.cos(a)*2.3+j,Math.sin(a)*2.3,ph))*k;x*=jag;z*=jag;yy-=k*k*r*(.45+.2*Math.sin(a*3+ph2));p.setXYZ(i,x,yy,z);const s=.38+.62*Math.pow(k,1.3)*(.8+.2*t)+t*.08;c.push(s*.92,s,s*.95)}
@@ -674,16 +708,18 @@ export default function Sauna(){
  const trunkGeo=(rt,rb)=>{const g=new T.CylinderGeometry(rt,rb,1,7,3,true);g.translate(0,.5,0);return g}
  const species=[
   {n:'spruce',crowns:[1,1,1,0,0].map(spruceGeo),crownMat:foliage('#34503a',.25),trunk:trunkGeo(.004,.021),bark:patch(std('#5d4c3c',{roughness:.95}),{color:'float gr=sin(atan(vLocal.z,vLocal.x)*40.+vnoise(vLocal.xy*vec2(9.,60.))*4.);diffuseColor.rgb*=.72+.28*smoothstep(-.6,.6,gr);'}),h:[17,28],w:[.85,1.15]},
-  {n:'pine',crowns:[0,1,2].map(()=>crownGeo(12,.66,.97,.12,.05,.09,.45)),crownMat:foliage('#4a6236',.3),trunk:trunkGeo(.007,.017),bark:patch(std('#5b4636',{roughness:.95}),{head:'uniform vec3 uOrange;',uniforms:{uOrange:col('#b0663a')},color:'diffuseColor.rgb=mix(diffuseColor.rgb,uOrange,smoothstep(.35,.62,vLocal.y)*(.7+.3*vnoise(vLocal.xy*vec2(20.,80.))));diffuseColor.rgb*=.8+.2*vnoise(vec2(atan(vLocal.z,vLocal.x)*6.,vLocal.y*90.));'}),h:[18,27],w:[.9,1.2]},
-  {n:'birch',crowns:[0,1,2].map(()=>crownGeo(26,.4,.99,.13,.035,.065,.8)),crownMat:foliage('#6d8e42',.35),trunk:trunkGeo(.006,.015),bark:patch(std('#e8e4da',{roughness:.8}),{color:'float ang=atan(vLocal.z,vLocal.x);float lent=smoothstep(.7,.78,vnoise(vec2(ang*2.,vLocal.y*260.)));float pat=smoothstep(.6,.7,fbm(vec2(ang*1.2,vLocal.y*30.)));float base=smoothstep(.16,.02,vLocal.y);diffuseColor.rgb*=1.-max(max(lent*.85,pat*.8),base*.75);'}),h:[13,19],w:[.9,1.2]}
+  {n:'pine',crowns:[0,1,2].map(()=>crownGeo(12,.66,.97,.12,.05,.09,.45)),crownMat:foliage('#44592f',.3,.25,.4),trunk:trunkGeo(.007,.017),bark:patch(std('#5b4636',{roughness:.95}),{head:'uniform vec3 uOrange;',uniforms:{uOrange:col('#b0663a')},color:'diffuseColor.rgb=mix(diffuseColor.rgb,uOrange,smoothstep(.35,.62,vLocal.y)*(.7+.3*vnoise(vLocal.xy*vec2(20.,80.))));diffuseColor.rgb*=.8+.2*vnoise(vec2(atan(vLocal.z,vLocal.x)*6.,vLocal.y*90.));'}),h:[18,27],w:[.9,1.2]},
+  {n:'birch',crowns:[0,1,2].map(()=>crownGeo(26,.4,.99,.13,.035,.065,.8)),crownMat:foliage('#5d7b3a',.35,.25,.42),trunk:trunkGeo(.006,.015),bark:patch(std('#e8e4da',{roughness:.8}),{color:'float ang=atan(vLocal.z,vLocal.x);float lent=smoothstep(.7,.78,vnoise(vec2(ang*2.,vLocal.y*260.)));float pat=smoothstep(.6,.7,fbm(vec2(ang*1.2,vLocal.y*30.)));float base=smoothstep(.16,.02,vLocal.y);diffuseColor.rgb*=1.-max(max(lent*.85,pat*.8),base*.75);'}),h:[13,19],w:[.9,1.2]}
  ]
  const plantings=species.map(s=>s.crowns.map(()=>[]))
  const cell=low?5.6:4.4
  for(let gx=-140;gx<=140;gx+=cell)for(let gz=-140;gz<=140;gz+=cell){const x=gx+(rand()-.5)*cell*.9,z=gz+(rand()-.5)*cell*.9,r=Math.hypot(x,z),edge=54+noise.noise(x*.05,z*.05,2.2)*7
   if(r<edge||r>136||Math.hypot(x-101,z+70)<46||(z>0&&Math.abs(x)<6)||!clearAround(x,z,3)||rand()>.86)continue
   const k=r<edge+9&&rand()<.45?2:rand()<.22?1:0,s=species[k],h=s.h[0]+rand()*(s.h[1]-s.h[0]),v=k===0?(r<88?Math.floor(rand()*3):3+Math.floor(rand()*2)):Math.floor(rand()*s.crowns.length);plantings[k][v].push([x,groundY(x,z)-.3,z,h*(s.w[0]+rand()*(s.w[1]-s.w[0])),h])}
- // A few solitary birches and a pine inside the clearing.
- for(const [x,z,k] of [[-41,15,2],[-37,34,2],[27,-18,2],[-15,-35,2],[38,-4,2],[-44,-12,2]])plantings[k][0].push([x,-.5,z,k===1?22:16,k===1?22:16])
+ // Solitary birches at the edge, and small groups of birch and pine between the pavilions for shade and privacy.
+ for(const [x,z,k,h=16] of [[-41,15,2],[-37,34,2],[27,-18,2],[-15,-35,2],[38,-4,2],[-44,-12,2],
+  [-17,1,2,11],[-19.5,3.5,2,9],[-16,5,1,13],[9,-12,2,10],[11.5,-10,2,12],[-8,-11,1,13],[-10.5,-9,2,9],[20,-9,2,11],[22.5,-11,1,14],[18.5,-12,2,9],
+  [-10,17,2,10],[-12,19.5,2,8.5],[-13,38,2,11],[-15.5,36,1,13],[7,41,2,10],[9,44,2,12],[9,-33,2,10],[9.5,-37.5,2,12],[-30,-8,1,14],[-27,-10,2,10]])if(clearAround(x,z,1.2))plantings[k][Math.floor(rand()*species[k].crowns.length)].push([x,-.4,z,h*1.05,h])
  species.forEach((s,k)=>{const all=plantings[k].flat();instanced(s.trunk,s.bark,all.map(([x,y,z,w,h])=>[x,y,z,w,h,w]),{cast:true});s.crowns.forEach((g,v)=>{const cr=instanced(g,s.crownMat,plantings[k][v].map(([x,y,z,w,h])=>[x,y,z,w,h,w]),{cast:true,tint:()=>new T.Color(.85+rand()*.25,.85+rand()*.3,.8+rand()*.25)});if(s.n==='birch')summerOnly.push(cr)})})
  // Leafless birch twigs for winter, sharing the birches' placement.
  {const parts=[];for(let i=0;i<30;i++){const y=.38+rand()*.58,len=.1+rand()*.2*(1.1-y),g=new T.CylinderGeometry(.0025,.005,len,4,1,true);g.deleteAttribute('uv');g.translate(0,len/2,0);g.rotateZ(.5+rand()*.7);g.rotateY(rand()*6.28);g.translate(0,y,0);parts.push(g)}
@@ -701,7 +737,7 @@ export default function Sauna(){
  smoke(new T.Vector3(1.9,4.55,.3));const crownSmoke=smoke(ceremonyBuilding.localToWorld(new T.Vector3(0,7.1,0)),{count:40,size:1.1});smoke(new T.Vector3(12,.7,27),{count:18,rise:3.5,size:.45,drift:1.2,opacity:.3})
  // Steam: bursts when water hits the stones, a gentle plume from the herbal generator, and in winter over the water.
  smoke(new T.Vector3(1.9,1.2,.55),{count:16,rise:1.1,size:.35,drift:.15,opacity:.35,period:7,life:2.6,wobble:.35});smoke(ceremonyBuilding.localToWorld(new T.Vector3(0,1.35,0)),{count:22,rise:1.6,size:.5,drift:.2,opacity:.35,period:9,life:3.2,wobble:.5});smoke(herbalBuilding.localToWorld(new T.Vector3(2.8,1.05,-1.4)),{count:14,rate:.12,rise:1.3,size:.3,drift:.2,opacity:.22,wobble:.3})
- winterOnly.push(smoke(new T.Vector3(4.5,.95,2.7),{count:20,rate:.07,rise:1.8,size:.55,drift:.6,opacity:.15,wobble:.4}),smoke(new T.Vector3(poolX+1.39,.45,poolZ+2.12),{count:14,rate:.07,rise:1.4,size:.6,drift:.5,opacity:.2,wobble:.4}))
+ winterOnly.push(smoke(new T.Vector3(4.5,.95,2.7),{count:20,rate:.07,rise:1.8,size:.55,drift:.6,opacity:.15,wobble:.4}),smoke(new T.Vector3(poolX+1.39,poolLevel+.05,poolZ+2.12),{count:14,rate:.07,rise:1.4,size:.6,drift:.5,opacity:.2,wobble:.4}))
  // Warm light pools on the ground; they fade in at dusk.
  const poolTex=(()=>{const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d'),gr=g.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.18,'rgba(255,255,255,.5)');gr.addColorStop(.5,'rgba(255,255,255,.14)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,128,128);return new T.CanvasTexture(c)})()
  const poolMat=new T.MeshBasicMaterial({map:poolTex,color:'#ffb45e',transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,fog:false,polygonOffset:true,polygonOffsetFactor:-4})
@@ -714,7 +750,7 @@ export default function Sauna(){
   const fp=instanced(new T.CircleGeometry(1,10).rotateX(-Math.PI/2),footprint,list);fp.userData.noReflect=fp.userData.noAO=true;winterOnly.push(fp)}
  // Live reflection in the pool on capable devices; phones keep the cheaper shaded water.
  let poolWater=null
- if(!low){poolWater=new Reflector(new T.CircleGeometry(1,96),{textureWidth:512,textureHeight:512,clipBias:.003,multisample:0,shader:POOL});poolWater.position.set(poolX,.405,poolZ);poolWater.rotation.x=-Math.PI/2;poolWater.scale.set(5.55,3.85,1);poolWater.material.uniforms.uTime=uTime;poolWater.userData.noAO=true;scene.add(poolWater);scene.remove(poolSurface);poolSurface.geometry.dispose()
+ if(!low){poolWater=new Reflector(new T.CircleGeometry(1,96),{textureWidth:512,textureHeight:512,clipBias:.003,multisample:0,shader:POOL});poolWater.position.set(poolX,poolLevel+.005,poolZ);poolWater.rotation.x=-Math.PI/2;poolWater.scale.set(5.6,3.9,1);poolWater.material.uniforms.uTime=uTime;poolWater.userData.noAO=true;scene.add(poolWater);scene.remove(poolSurface);poolSurface.geometry.dispose()
   const skipped=[];scene.traverse(o=>{if(o.userData.noReflect)skipped.push(o)});const reflect=poolWater.onBeforeRender
   poolWater.onBeforeRender=(r,sc,c)=>{if(c!==camera)return;const vis=skipped.map(o=>o.visible);skipped.forEach(o=>o.visible=false);sc.background=envTarget.texture;reflect(r,sc,c);sc.background=null;skipped.forEach((o,i)=>o.visible=vis[i])}}
  const markers=stops.slice(1).map((s,i)=>{const m=keep(mesh(new T.SphereGeometry(.13,16,12),new T.MeshBasicMaterial({color:0xffdb8f}),...s.point));m.userData.index=i+1;m.castShadow=false;return m})
@@ -750,6 +786,7 @@ export default function Sauna(){
 
  let destination=null,paused=false;const rotate=direction=>{destination=null;const offset=camera.position.clone().sub(controls.target);offset.applyAxisAngle(new T.Vector3(0,1,0),direction*Math.PI/8);camera.position.copy(controls.target).add(offset);controls.update()};api.current={rotate,pause(v){paused=v},go(i){destination={pos:new T.Vector3(...stops[i].pos),target:new T.Vector3(...stops[i].target)}},cut(v){roofs.forEach(roof=>roof.visible=!v);crownSmoke.visible=!v;renderer.shadowMap.needsUpdate=true},mode:applyMode}
  controls.addEventListener('start',()=>destination=null)
+ if(import.meta.env.DEV)window.__sauna={camera,controls}  // lets a developer place the camera from the console
  const zoomRay=new T.Raycaster(),zoomPointer=new T.Vector2();
  const onWheel=e=>{
   e.preventDefault();e.stopImmediatePropagation();destination=null;
