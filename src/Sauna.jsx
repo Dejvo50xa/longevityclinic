@@ -457,7 +457,7 @@ export default function Sauna(){
  ceremonyBuilding.position.set(18,0,-39);ceremonyBuilding.rotation.y=Math.PI*.73;
  scene.updateMatrixWorld(true);for(const s of [-1,1]){const a=s*.62,q=ceremonyBuilding.localToWorld(new T.Vector3(Math.sin(a)*5.6,0,Math.cos(a)*5.6));pools.push([q.x,q.z,2.6])}{const q=herbalBuilding.localToWorld(new T.Vector3(1,0,3));pools.push([q.x,q.z,4])}
  // ——— Forest stream feeding a pond; the forest trail crosses its outflow on a footbridge ———
- const poolX=-19,poolZ=20,poolLevel=-.3,pond={x:-28.6,z:-20.6,rx:4.4,rz:3.1},wobble=a=>1+.07*Math.sin(3*a)+.05*Math.sin(5*a+1),toCurve=pts=>new T.CatmullRomCurve3(pts.map(([x,z])=>new T.Vector3(x,0,z)))
+ const poolX=-19,poolZ=20,poolLevel=-.26,pond={x:-28.6,z:-20.6,rx:4.4,rz:3.1},wobble=a=>1+.07*Math.sin(3*a)+.05*Math.sin(5*a+1),toCurve=pts=>new T.CatmullRomCurve3(pts.map(([x,z])=>new T.Vector3(x,0,z)))
  const inlet=toCurve([[-64,-37],[-55,-31],[-46,-27],[-38,-24],[-32.8,-21.8]]),outlet=toCurve([[-25.4,-23],[-25,-28.5],[-24.2,-34],[-22.8,-42],[-21.2,-52],[-20,-64]])
  const streamPts=[...inlet.getSpacedPoints(90),...outlet.getSpacedPoints(110)],streamDist=(x,z)=>{let m=1e9;for(const q of streamPts)m=Math.min(m,Math.hypot(q.x-x,q.z-z));return m}
  function channel(curve,n){const prof=[[-1.5,-.03],[-1.05,-.2],[-.5,-.36],[0,-.4],[.5,-.36],[1.05,-.2],[1.5,-.03]],pos=[],idx=[],wpos=[],wuv=[],wnor=[],widx=[],pts=curve.getSpacedPoints(n);let along=0
@@ -547,7 +547,7 @@ export default function Sauna(){
   for(const dx of [-w/2+.3,w/2-.3])for(const dz of [-d/2+.3,0,d/2+.3])box(.16,3.5,.16,wood,cx+dx,1.75,cz+dz);
   for(const [dx,dz] of [[-w/2+.7,d/2+1.4],[w/2-.7,d/2+1.4]])potPlant(cx+dx,cz+dz,1.1)
   if(enclosed){box(w,.2,d+2,charred,cx,3.6,cz+.5,roof);for(let i=0;i<Math.round((w-.2)/.3);i++)box(.27,.04,d+1.8,wood,cx-w/2+.25+i*.3,3.48,cz+.5,roof)
-   {const fx=cx+3.3,fz=cz+d/2-.75;cyl(.36,.36,.72,steel,fx,.78,fz,scene,24);cyl(.07,.2,.42,steel,fx,.21,fz,scene,12);box(.36,.28,.02,fire,fx,.78,fz+.36);cyl(.085,.085,2.36,steel,fx,2.3,fz,roof,12);for(let i=0;i<5;i++)cyl(.06,.06,.4,logBark,fx-.75,.17+Math.floor(i/3)*.12,fz-.14+(i%3)*.13,scene,8).rotation.z=Math.PI/2}box(w-.3,.08,d+1.7,sedum,cx,3.73,cz+.5,roof);for(const s of [-1,1]){box(w+.1,.34,.08,wood,cx,3.68,cz+.5+s*(d/2+1.04),roof);box(.08,.34,d+2.1,wood,cx+s*(w/2+.04),3.68,cz+.5,roof)}
+   {const fx=cx-3.3,fz=cz+d/2-.75;cyl(.36,.36,.72,steel,fx,.78,fz,scene,24);cyl(.07,.2,.42,steel,fx,.21,fz,scene,12);box(.36,.28,.02,fire,fx,.78,fz+.36);cyl(.085,.085,2.36,steel,fx,2.3,fz,roof,12);for(let i=0;i<5;i++)cyl(.06,.06,.4,logBark,fx+.75,.17+Math.floor(i/3)*.12,fz-.14+(i%3)*.13,scene,8).rotation.z=Math.PI/2}box(w-.3,.08,d+1.7,sedum,cx,3.73,cz+.5,roof);for(const s of [-1,1]){box(w+.1,.34,.08,wood,cx,3.68,cz+.5+s*(d/2+1.04),roof);box(.08,.34,d+2.1,wood,cx+s*(w/2+.04),3.68,cz+.5,roof)}
    box(w,3.2,.025,glass,cx,1.7,cz-d/2,roof);for(const dx of [-w/2,w/2])box(.025,3.2,d,glass,cx+dx,1.7,cz,roof);
    const n=Math.round(w/1.6);for(let i=0;i<=n;i++)box(.05,3.2,.06,charred,cx-w/2+i*w/n,1.7,cz-d/2,roof);for(const dx of [-w/2,w/2])for(let i=1;i<7;i++)box(.06,3.2,.05,charred,cx+dx,1.7,cz-d/2+i*d/7,roof)
    for(let i=0;i<cols;i+=2)for(let j=0;j<rows;j++){const lx=cx+(i-(cols-1)/2+.5)*1.65,lz=cz+(j-(rows-1)/2)*3;cyl(.006,.006,.7,charred,lx,3.15,lz,roof,4);mesh(new T.CylinderGeometry(.09,.2,.2,20,1,true),lampShade,lx,2.72,lz,roof);mesh(new T.SphereGeometry(.06,10,8),lampGlow,lx,2.66,lz,roof)}}
@@ -566,7 +566,7 @@ export default function Sauna(){
  // Natural swimming pool set into the ground: flush stone rim, a timber deck from the pergola, reeds and boulders on the far side.
  const basin=mesh(new T.CylinderGeometry(1,.9,1.3,96,1,true),std('#56605b',{side:T.DoubleSide,roughness:.9}),poolX,-.84,poolZ);basin.scale.set(5.72,1,4.02);basin.castShadow=false
  const poolSurface=keep(mesh(new T.CircleGeometry(1,128),water,poolX,poolLevel,poolZ));poolSurface.rotation.x=-Math.PI/2;poolSurface.scale.set(5.6,3.9,1);poolSurface.castShadow=false;
- for(let i=0;i<56;i++){const a=i/56*Math.PI*2;if(Math.cos(a)<-.78)continue;const block=box(.66,.12,.5+(i%3)*.08,coping,poolX+5.98*Math.cos(a),-.2,poolZ+4.26*Math.sin(a));block.rotation.y=-a;}
+ for(let i=0;i<56;i++){const a=i/56*Math.PI*2;if(Math.cos(a)<-.78)continue;const block=box(.66,.1,.62,coping,poolX+5.98*Math.cos(a),-.21,poolZ+4.26*Math.sin(a));block.rotation.y=-a;}
  for(let i=0;i<17;i++){const a=Math.PI*.07+i/17*Math.PI*.88;rockAt(poolX+6.6*Math.cos(a),-.1,poolZ-5*Math.sin(a),.4+(i%3)*.18)}
  for(let i=0;i<3;i++)box(2.1,.14,.6,coping,poolX,-.24-i*.15,poolZ+4.35-i*.45);
  for(let i=0;i<20;i++)box(.15,.05,5.6,wood,-26.62+i*.165,.085,20.25);for(const z of [17.7,20.25,22.8]){box(3.3,.14,.1,charred,-25.05,-.01,z);for(const x of [-26.4,-23.75])box(.12,1.1,.12,wood,x,-.62,z)}
@@ -719,7 +719,7 @@ export default function Sauna(){
  // Solitary birches at the edge, and small groups of birch and pine between the pavilions for shade and privacy.
  for(const [x,z,k,h=16] of [[-41,15,2],[-37,34,2],[27,-18,2],[-15,-35,2],[38,-4,2],[-44,-12,2],
   [-17,1,2,11],[-19.5,3.5,2,9],[-16,5,1,13],[9,-12,2,10],[11.5,-10,2,12],[-8,-11,1,13],[-10.5,-9,2,9],[20,-9,2,11],[22.5,-11,1,14],[18.5,-12,2,9],
-  [-10,17,2,10],[-12,19.5,2,8.5],[-13,38,2,11],[-15.5,36,1,13],[7,41,2,10],[9,44,2,12],[9,-33,2,10],[9.5,-37.5,2,12],[-30,-8,1,14],[-27,-10,2,10]])if(clearAround(x,z,1.2))plantings[k][Math.floor(rand()*species[k].crowns.length)].push([x,-.4,z,h*1.05,h])
+  [-10,17,2,10],[-12,19.5,2,8.5],[-13,38,2,11],[-15.5,36,1,13],[9,-33,2,10],[9.5,-37.5,2,12],[-30,-8,1,14],[-27,-10,2,10]])if(clearAround(x,z,1.2))plantings[k][Math.floor(rand()*species[k].crowns.length)].push([x,-.4,z,h*1.05,h])
  species.forEach((s,k)=>{const all=plantings[k].flat();instanced(s.trunk,s.bark,all.map(([x,y,z,w,h])=>[x,y,z,w,h,w]),{cast:true});s.crowns.forEach((g,v)=>{const cr=instanced(g,s.crownMat,plantings[k][v].map(([x,y,z,w,h])=>[x,y,z,w,h,w]),{cast:true,tint:()=>new T.Color(.85+rand()*.25,.85+rand()*.3,.8+rand()*.25)});if(s.n==='birch')summerOnly.push(cr)})})
  // Leafless birch twigs for winter, sharing the birches' placement.
  {const parts=[];for(let i=0;i<30;i++){const y=.38+rand()*.58,len=.1+rand()*.2*(1.1-y),g=new T.CylinderGeometry(.0025,.005,len,4,1,true);g.deleteAttribute('uv');g.translate(0,len/2,0);g.rotateZ(.5+rand()*.7);g.rotateY(rand()*6.28);g.translate(0,y,0);parts.push(g)}

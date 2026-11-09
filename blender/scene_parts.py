@@ -15,6 +15,7 @@ from scene_kit import (C, TAU, Curve, bl, collection, find_layer_collection, g_b
 pi = math.pi
 sin, cos = math.sin, math.cos
 POOL = (-19., 20.)
+POOL_LEVEL = -.26
 POND = dict(x=-28.6, z=-20.6, rx=4.4, rz=3.1)
 INLET = Curve([(-64, -37), (-55, -31), (-46, -27), (-38, -24), (-32.8, -21.8)])
 OUTLET = Curve([(-25.4, -23), (-25, -28.5), (-24.2, -34), (-22.8, -42), (-21.2, -52), (-20, -64)])
@@ -54,9 +55,9 @@ def carved_y(x, z):
     r = math.hypot(px, pz) / wobble(a)
     if r < 1.15:
         y = min(y, -.225 - .64 * smooth(1.12, .2, r))
-    qx, qz = (x - POOL[0]) / 5.7, (z - POOL[1]) / 3.95
+    qx, qz = (x - POOL[0]) / 5.75, (z - POOL[1]) / 4.05
     if qx * qx + qz * qz < 1:
-        y = min(y, -.75)
+        y = min(y, -1.6)
     return y
 
 
@@ -153,8 +154,19 @@ def finnish_sauna(B, L):
     for i in range(3):
         for z in (4.9, 6.5):
             B.box(.16, .35, .16, 'concrete', -.7 + i * .72, -.075, z)
+    # Back wall with a long window above the backrest, looking into the trees.
     for i in range(32):
-        B.box(.17, 2.65, .16, 'charred' if i % 4 == 0 else 'wood', -2.8 + i * .18, 1.43, -2)
+        x, m = -2.8 + i * .18, 'charred' if i % 4 == 0 else 'wood'
+        if i < 5 or i > 24:
+            B.box(.17, 2.65, .16, m, x, 1.43, -2)
+        else:
+            B.box(.17, 1.5, .16, m, x, .855, -2)
+            B.box(.17, .3, .16, m, x, 2.605, -2)
+    B.box(3.6, .85, .025, 'glass', -.19, 2.03, -2)
+    for y in (1.605, 2.455):
+        B.box(3.66, .05, .2, 'charred', -.19, y, -2)
+    for x in (-1.99, -.19, 1.61):
+        B.box(.05, .85, .2, 'charred', x, 2.03, -2)
 
     def roof_under(z):
         return 2.95 + z * .0889
@@ -218,9 +230,9 @@ def finnish_sauna(B, L):
     B.add(g_circle(.11, 20), 'bucketWater', trs(1.25, .73, -.38, rx=-pi / 2))
     B.add(g_cyl(.012, .012, .5, 6), 'wood', trs(1.36, .86, -.36, rz=-.45))
     B.add(g_sphere(.05, 10, 6, 0, TAU, pi / 2, pi / 2), 'wood', trs(1.22, .72, -.37))
-    B.add(g_cyl(.09, .09, .025, 24), 'wood', trs(-1.5, 2.05, -1.905, rx=pi / 2))
-    B.add(g_cyl(.072, .072, .03, 24), 'linen', trs(-1.5, 2.05, -1.9, rx=pi / 2))
-    B.box(.005, .06, .004, 'charred', -1.5, 2.07, -1.884)
+    B.add(g_cyl(.09, .09, .025, 24), 'wood', trs(-2.28, 2.05, -1.905, rx=pi / 2))
+    B.add(g_cyl(.072, .072, .03, 24), 'linen', trs(-2.28, 2.05, -1.9, rx=pi / 2))
+    B.box(.005, .06, .004, 'charred', -2.28, 2.07, -1.884)
     B.box(.12, .22, .12, 'lampGlow', -2.62, 2.25, -1.74)
     for i in range(5):
         B.box(.025, .3, .02, 'wood', -2.7 + i * .04, 2.25, -1.66)
@@ -457,6 +469,16 @@ def lounge(B, L, cx, cz, cols, rows, enclosed):
         L['pot_plants'].append((world_point(B, cx + dx, .5, cz + dz), 1.))
     if enclosed:
         B.box(w, .2, d + 2, 'charred', cx, 3.6, cz + .5)
+        for i in range(round((w - .2) / .3)):  # light timber ceiling
+            B.box(.27, .04, d + 1.8, 'wood', cx - w / 2 + .25 + i * .3, 3.48, cz + .5)
+        fx, fz = cx - 3.3, cz + d / 2 - .75  # wood stove by the open front
+        B.cyl(.36, .36, .72, 'steel', fx, .78, fz, 24)
+        B.cyl(.07, .2, .42, 'steel', fx, .21, fz, 12)
+        B.box(.36, .28, .02, 'fire', fx, .78, fz + .365)
+        B.cyl(.085, .085, 2.36, 'steel', fx, 2.3, fz, 12)
+        for i in range(5):
+            log(B, trs(fx + .75, .17 + (i // 3) * .12, fz - .14 + (i % 3) * .13, s=(.4, .06, .06)))
+        light(L, B, fx, .8, fz + .6, (1, .5, .2), 8, 40, .15)
         B.box(w - .3, .08, d + 1.7, 'sedum', cx, 3.73, cz + .5)
         for s in (-1, 1):
             B.box(w + .1, .34, .08, 'wood', cx, 3.68, cz + .5 + s * (d / 2 + 1.04))
@@ -478,7 +500,7 @@ def lounge(B, L, cx, cz, cols, rows, enclosed):
                 B.cyl(.006, .006, .7, 'charred', lx, 3.15, lz, 4)
                 B.add(g_cyl(.09, .2, .2, 20, open_=True), 'lampShade', trs(lx, 2.72, lz))
                 B.add(g_sphere(.06, 10, 8), 'lampGlow', trs(lx, 2.66, lz))
-                light(L, B, lx, 2.6, lz, (1, .78, .55), 0, 12, .06)
+                light(L, B, lx, 2.6, lz, (1, .78, .55), 3, 12, .06)
     else:
         for i in range(19):
             B.box(.12, .19, d + 1, 'wood', cx - w / 2 + i * w / 18, 3.5, cz)
@@ -499,28 +521,42 @@ def lounge(B, L, cx, cz, cols, rows, enclosed):
         light(L, B, cx, 3.1, cz, (1, .75, .5), 0, 60, 1.5, 'AREA', (w - 1, d))
     B.box(w - .6, .035, .04, 'led', cx, 3.35, cz - d / 2 + .1)
     if enclosed:
-        light(L, B, cx, 3.2, cz, (1, .78, .55), 0, 120, 1., 'AREA', (w - 1, d - 1))
+        light(L, B, cx, 3.2, cz, (1, .8, .6), 70, 120, 1., 'AREA', (w - 1, d - 1))
 
 
 def pool(B, L):
+    """Natural swimming pool set into the ground: flush stone rim, a timber deck from the pergola, reeds on the far side."""
     px, pz = POOL
-    B.add(g_cyl(1, 1, .65, 128, open_=True), 'paving', trs(px, .05, pz, s=(6, 1, 4.3)))
-    B.add(flip(g_cyl(1, 1, 1.02, 128, open_=True)), 'coping', trs(px, -.13, pz, s=(5.62, 1, 3.9)))
-    B.add(g_circle(1, 96), 'coping', trs(px, -.62, pz, rx=-pi / 2, s=(5.62, 3.9, 1)))
-    B.add(g_ring(.93, 1., 128), 'paving', trs(px, .375, pz, rx=-pi / 2, s=(6, 4.3, 1)))
-    B.add(g_cyl(1, 1, 1.01, 128), 'poolWater', trs(px, -.1, pz, s=(5.6, 1, 3.88)), coll='Water')
+    B.add(flip(g_cyl(1, .9, 1.3, 128, open_=True)), 'coping', trs(px, -.84, pz, s=(5.72, 1, 4.02)))
+    B.add(g_circle(1, 96), 'paving', trs(px, -1.48, pz, rx=-pi / 2, s=(5.2, 3.65, 1)))
+    B.add(g_cyl(1, .92, 1.16, 128), 'poolWater', trs(px, POOL_LEVEL - .58, pz, s=(5.68, 1, 3.98)), coll='Water')
     for i in range(56):
         a = i / 56 * TAU
-        B.box(.62, .2, .54, 'coping', px + 5.82 * cos(a), .45, pz + 4.08 * sin(a), ry=-a)
+        if cos(a) < -.78:
+            continue
+        B.box(.66, .1, .62, 'coping', px + 5.98 * cos(a), -.21, pz + 4.26 * sin(a), ry=-a)
     for i in range(17):
         a = pi * .07 + i / 17 * pi * .88
-        L['boulders'].append(((px + 6.5 * cos(a), .1, pz - 5 * sin(a)), .45 + (i % 3) * .16))
+        L['boulders'].append(((px + 6.6 * cos(a), -.12, pz - 5 * sin(a)), .4 + (i % 3) * .16))
     for i in range(3):
-        B.box(2.1, .16, .6, 'coping', px, .08 + i * .12, pz + 5.5 - i * .5)
-    for _ in range(90):
-        a = pi * .12 + rng.random() * pi * .76
-        rr = 6.9 + rng.random() * 1.4
-        L['reeds'].append(((px + rr * cos(a), -.22, pz - rr * .78 * sin(a)), 2.2 + rng.random() * 1.6))
+        B.box(2.1, .14, .6, 'coping', px, -.24 - i * .15, pz + 4.35 - i * .45)
+    for i in range(20):
+        B.box(.15, .05, 5.6, 'deck', -26.62 + i * .165, .085, 20.25)
+    for z in (17.7, 20.25, 22.8):
+        B.box(3.3, .14, .1, 'charred', -25.05, -.01, z)
+        for x in (-26.4, -23.75):
+            B.box(.12, 1.5, .12, 'wood', x, -.82, z)
+    for z in (19.9, 20.6):
+        B.cyl(.022, .022, 1.5, 'chrome', -23.42, -.2, z, 8)
+        B.box(.3, .03, .03, 'chrome', -23.56, .55, z)
+    for y in (-.45, -.15):
+        B.box(.04, .03, .7, 'chrome', -23.42, y, 20.25)
+    B.box(.6, .05, .4, 'towel2', -26.1, .14, 18.2)
+    B.box(.55, .05, .38, 'towel0', -26.05, .14, 22.3)
+    for _ in range(130):
+        a = pi * .1 + rng.random() * pi * .8
+        rr = 6.25 + rng.random() * 1.5
+        L['reeds'].append(((px + rr * cos(a), -.22, pz - rr * .74 * sin(a)), 2.2 + rng.random() * 1.6))
     # Winter: ice with a swimming hole near the steps.
     V, F = [], []
     n = 70
@@ -536,9 +572,9 @@ def pool(B, L):
             if cu * cu + cv * cv > .995 or ((cu - .25) / .2) ** 2 + ((cv + .55) / .28) ** 2 < 1:
                 continue
             F.append((idx[i, j], idx[i + 1, j], idx[i + 1, j + 1], idx[i, j + 1]))
-    B.add(g_custom(V, F, [[(V[k][0] * 5, V[k][1] * 4) for k in f] for f in F]), 'ice', trs(px, .42, pz, rx=-pi / 2, s=(5.62, 3.9, 1)), coll='WinterOnly')
-    person(B, 'bathe', px + 1.39, 0, pz + 2.12, pi * .8, W=.4)
-    L['steam'].append(((px + 1.39, .45, pz + 2.12), 'hole'))
+    B.add(g_custom(V, F, [[(V[k][0] * 5, V[k][1] * 4) for k in f] for f in F]), 'ice', trs(px, POOL_LEVEL + .02, pz, rx=-pi / 2, s=(5.62, 3.9, 1)), coll='WinterOnly')
+    person(B, 'bathe', px + 1.39, POOL_LEVEL - .4, pz + 2.12, pi * .8, W=.4)
+    L['steam'].append(((px + 1.39, POOL_LEVEL + .05, pz + 2.12), 'hole'))
     for x, z in ((-26.2, 27.4), (-24.8, 27.1), (-23.3, 26.8), (-21.8, 26.4), (-20.4, 26.1)):
         B.add(g_cyl(.4, .43, .14, 9), 'paving', trs(x, -.19, z, ry=rng.random() * 3, s=(1 + rng.random() * .3, 1, .8 + rng.random() * .2)))
 
@@ -583,7 +619,7 @@ def build_paths(B, L):
     segs = []
     L['paths'] = segs
 
-    def curved(pts, width=1.65, skip=None, n=70):
+    def curved(pts, width=1.4, skip=None, n=70):
         p = [(v.x, v.z) for v in Curve(pts).points(n)]
         pid = len(L.setdefault('path_list', []))
         L['path_list'].append((p, width))
@@ -593,18 +629,19 @@ def build_paths(B, L):
                 continue
             segs.append((x, z, nx, nz, width, pid))
         return p
-    L['entry'] = curved([(0, 73), (0, 40), (0, 20), (0, 8), (0, 5)], 2.4)
+    L['entry'] = curved([(0, 73), (0, 40), (0, 20), (0, 8), (0, 5)], 1.9)
     L['west'] = curved([(0, 8), (-11, 12), (-25, 13), (-38, 8), (-39.5, 2.7)])
     L['east'] = curved([(0, 8), (16, 4), (32, -12), (30, -29), (21.75, -42.3)])
-    L['inner'] = curved([(-25, 13), (-22, -6), (-14, -18), (0, -22.5)], 2)
-    L['south'] = curved([(30, -29), (26, -26), (14, -22), (0, -22.5)], 2)
-    curved([(0, 20), (-7, 21), (-12, 25), (-19, 28)], 2)
-    curved([(-19, 28), (-24, 31), (-31, 29)], 2)
+    L['inner'] = curved([(-25, 13), (-22, -6), (-14, -18), (0, -22.5)], 1.5)
+    L['south'] = curved([(30, -29), (26, -26), (14, -22), (0, -22.5)], 1.5)
+    curved([(0, 20), (-7, 21), (-12, 25), (-19, 28)], 1.4)
+    curved([(-19, 28), (-24, 31), (-31, 29)], 1.4)
+    curved([(0, 34), (-3.2, 34)], 1.3, n=2)
     curved([(0, 5), (4.5, 5), (4.5, 3.7)], 1, n=2)
     curved([(0, 20), (6, 20), (9, 18)], 1.5)
     curved([(6, 20), (10, 23), (12, 24)], 1.5)
     L['trail'] = curved([(-6, -24.5), (-13, -28.5), (-20, -31), (-28, -30.5), (-33.5, -27.5)], 1.4, skip=lambda x, z: stream_dist(x, z) < 2.1)
-    L['clinic_path'] = curved([(30, -29), (45, -31), (67, -43), (83, -52), (101, -59)], 2.6)
+    L['clinic_path'] = curved([(30, -29), (45, -31), (67, -43), (83, -52), (101, -59)], 1.9)
     # Low stone edging on both sides, left out where paths meet.
     def near_other(x, z, pid, m):
         return any(j != pid and seg_dist(x, z, ax, az, bx, bz) < w / 2 + m for ax, az, bx, bz, w, j in segs)
@@ -636,9 +673,9 @@ def build_paths(B, L):
     for x in (-1.5, 1.5):
         for z in (11, 17, 23):
             bollard(B, L, x, z)
-    for key, w in (('west', 1.65), ('east', 1.65), ('inner', 2), ('south', 2), ('trail', 1.4)):
+    for key, w in (('west', 1.4), ('east', 1.4), ('inner', 1.5), ('south', 1.5), ('trail', 1.4)):
         lights_along(L[key], w, 11)
-    lights_along(L['clinic_path'], 2.6, 16)
+    lights_along(L['clinic_path'], 1.9, 16)
 
 
 def bollard(B, L, x, z):
@@ -885,8 +922,83 @@ def build_everything(B):
     bridge_and_boardwalk(B, L)
     site_furniture(B, L)
     clinic(B, L)
+    arrival(B, L)
+    cold_spot(B, L, -30.6, 7.2, 2.2)
+    cold_spot(B, L, 13.2, -46.2, -.5)
     footprints(B, L)
     return L
+
+
+def arrival(B, L):
+    """Arrival pavilion beside the entry path: reception desk, lockers and benches behind a glazed front with a deep porch."""
+    ax, az = -7.5, 34
+    B.box(7.4, .18, 8.6, 'deck', ax + .6, 0, az)
+    piers(B, ax - 2.4, ax + 4.1, az - 4, az + 4, -.09)
+    for i in range(45):
+        B.box(.14, 2.9, .17, 'charred' if i % 5 == 0 else 'wood', ax - 2.6, 1.55, az - 3.96 + i * .18)
+    for sz in (-4, 4):
+        for i in range(29):
+            B.box(.17, 2.9, .14, 'wood', ax - 2.52 + i * .18, 1.55, az + sz)
+    B.box(.025, 2.8, 5.6, 'glass', ax + 2.6, 1.5, az - 1.2)
+    for i in range(5):
+        B.box(.06, 2.8, .05, 'charred', ax + 2.6, 1.5, az - 4 + i * 1.4)
+    B.box(.06, 2.8, .05, 'charred', ax + 2.6, 1.5, az + 2.6)
+    for i in range(8):
+        B.box(.14, 2.9, .17, 'wood', ax + 2.6, 1.55, az + 2.72 + i * .18)
+    B.box(.05, 2.1, .95, 'wood', ax + 3.02, 1.14, az + 2.25, ry=-1.1)
+    green_roof(B, L, 7.6, 8.8, ax + .7, 3.1, az)
+    for i in range(18):  # light timber ceiling
+        B.box(.27, .04, 7.9, 'wood', ax - 2.45 + i * .3, 2.98, az)
+    for sz in (-3.9, 3.9):
+        B.box(.14, 3, .14, 'charred', ax + 4.2, 1.5, az + sz)
+    B.box(.7, 1.05, 2.4, 'wood', ax + .9, .6, az - 2.2)
+    B.box(.8, .05, 2.5, 'paving', ax + .9, 1.14, az - 2.2)
+    B.box(.3, .22, .02, 'charred', ax + .9, 1.3, az - 2.7)
+    B.box(.5, 2, 5.4, 'charred', ax - 2.2, 1.1, az + 1)
+    for i in range(11):
+        B.box(.02, 1.9, .02, 'wood', ax - 1.94, 1.1, az - 1.6 + i * .52)
+    B.box(.45, .06, 3.4, 'wood', ax - .5, .5, az + 1.4)
+    for dz in (-1.4, 1.4):
+        B.box(.36, .4, .06, 'charred', ax - .5, .29, az + 1.4 + dz)
+    B.box(.4, .05, 1.7, 'wood', ax - 2.25, 1.5, az - 2.9)
+    for i in range(5):
+        B.add(g_cyl(.075, .075, .36, 10), f'towel{i % 3}', trs(ax - 2.25, 1.6, az - 3.5 + i * .3, rz=pi / 2))
+    for dz in (-1.8, 1.8):
+        B.cyl(.006, .006, .44, 'charred', ax, 2.76, az + dz, 4)
+        B.add(g_sphere(.07, 10, 8), 'lampGlow', trs(ax, 2.48, az + dz))
+        light(L, B, ax, 2.4, az + dz, (1, .8, .58), 25, 60, .08)
+    B.box(.45, .07, 2.2, 'wood', ax + 3.7, .5, az - 2.5)
+    for dz in (-.9, .9):
+        B.box(.36, .4, .06, 'charred', ax + 3.7, .29, az - 2.5 + dz)
+    for dx, dz, sc in ((3.9, 3.3, 1.1), (3.9, -3.75, .9)):
+        B.cyl(.29 * sc, .22 * sc, .55 * sc, 'ceramic', ax + dx, .1 + .28 * sc, az + dz, 18)
+        L['pot_plants'].append((world_point(B, ax + dx, .1 + .5 * sc, az + dz), sc))
+    person(B, 'stand', ax + 3.5, .09, az + .6, pi / 2, robe='robe1', dressed=True)
+    sign(B, L, 'RECEPCE · ŠATNY', -3.4, 30.4, y=1.3, w=2.5, h=.44)
+
+
+def cold_spot(B, L, x, z, ry):
+    """Cold water within a few steps of a sauna: a stave tub and an open-air shower on a stone pad."""
+    B.push(trs(x, 0, z, ry=ry))
+    B.cyl(1.75, 1.8, .1, 'paving', .5, -.17, 0, 40)
+    B.add(g_cyl(.74, .7, .9, 40, open_=True), 'lining', trs(0, .35, 0))
+    B.add(g_cyl(.7, .7, .04, 40), 'lining', trs(0, -.08, 0))
+    for i in range(36):
+        a = i / 36 * TAU
+        B.box(.132, .98, .085, 'wood', sin(a) * .78, .37, cos(a) * .78, ry=a)
+    for y in (.1, .68):
+        B.add(g_torus(.83, .022, 8, 40), 'steel', trs(0, y, 0, rx=pi / 2))
+    B.add(g_cyl(.72, .69, .8, 48), 'poolWater', trs(0, .36, 0), coll='Water')
+    B.box(.6, .22, .3, 'wood', 0, -.02, 1.02)
+    B.box(.6, .44, .26, 'wood', 0, .1, .78)
+    B.cyl(.03, .03, 2.3, 'chrome', 1.75, 1.0, -.2, 10)
+    B.box(.5, .035, .035, 'chrome', 1.52, 2.15, -.2)
+    B.cyl(.14, .14, .03, 'chrome', 1.3, 2.12, -.2, 18)
+    for i in range(6):
+        B.box(.9, .03, .1, 'wood', 1.3, -.1, -.5 + i * .13)
+    for i in range(1, 4):
+        B.add(g_cyl(.4, .43, .14, 9), 'paving', trs(.5, -.19, 2 + i * .75, ry=i, s=(1, 1, .8)))
+    B.pop()
 
 
 def footprints(B, L):
@@ -927,7 +1039,7 @@ SHOTS = {
     'pool': dict(pos=(-10.5, 1.55, 30.5), target=(-20, .9, 18.5), lens=24, shift=-.04),
     'pergola': dict(pos=(-20, 10, 38), target=(-31, 1, 24), lens=30),
     'clinic': dict(pos=(123, 25, -46), target=(101, 3, -70), lens=32),
-    'entrance': dict(pos=(12, 14, 30), target=(0, 0, 16), lens=30),
+    'entrance': dict(pos=(13, 13, 45), target=(-3, 0, 27), lens=30),
     'stream': dict(pos=(-13, 9, -9), target=(-27, 0, -24), lens=30),
 }
 
@@ -1229,6 +1341,18 @@ def plant_vegetation(B, L):
         gx += cell
     for x, z in ((-41, 15), (-37, 34), (27, -18), (-15, -35), (38, -4), (-44, -12)):
         decs.append((x, -.35, z, rng.random() * TAU, 15 / decid_h, 0))
+    # Small groups of broadleaf trees and young firs between the pavilions, for shade and privacy.
+    for x, z, k, h in ((-17, 1, 2, 11), (-19.5, 3.5, 2, 9), (-16, 5, 1, 9), (9, -12, 2, 10), (11.5, -10, 2, 12), (-8, -11, 1, 9),
+                       (-10.5, -9, 2, 9), (20, -9, 2, 11), (22.5, -11, 1, 10), (18.5, -12, 2, 9), (-10, 17, 2, 10), (-12, 19.5, 2, 8.5),
+                       (-13, 38, 2, 11), (-15.5, 36, 1, 9), (9, -33, 2, 10), (9.5, -37.5, 2, 12),
+                       (-30, -8, 1, 10), (-27, -10, 2, 10)):
+        if occupied(x, z, 1.2):
+            continue
+        if k == 2:
+            decs.append((x, -.35, z, rng.random() * TAU, h / decid_h, 0))
+        else:
+            v = rng.randrange(3)
+            saps.append((x, -.3, z, rng.random() * TAU, h / sap_h[v], v))
     scatter('Firs near', fir_near[0], firs_n, veg)
     scatter('Firs', fir_mid[0], firs_m, veg)
     scatter('Young firs', sapling[0], saps, veg)
@@ -1264,7 +1388,7 @@ def plant_vegetation(B, L):
             return
         tall = perlin(x * .08, z * .08, 6) * .5 + .5
         v = rng.randrange(len(grass_objs))
-        sc = (.8 + tall * .9) * (.85 + rng.random() * .3)
+        sc = (1. + tall * 1.25) * (.85 + rng.random() * .3)
         grass.append((x, ground_y(x, z) + .01, z, rng.random() * TAU, sc, v))
     for hx, hz, hr in hot:
         for _ in range(int(hr * hr * math.pi * 26)):
@@ -1276,8 +1400,8 @@ def plant_vegetation(B, L):
     for _ in range(20000):
         a, rr = rng.random() * TAU, math.sqrt(rng.random()) * 42
         try_grass(101 + cos(a) * rr, -70 + sin(a) * rr, False)
-    for _ in range(9000):
-        a, rr = rng.random() * TAU, 14 + math.sqrt(rng.random()) * 44
+    for _ in range(15000):
+        a, rr = rng.random() * TAU, 10 + math.sqrt(rng.random()) * 50
         x, z = cos(a) * rr, sin(a) * rr
         if perlin(x * .07, z * .07, 2) < .05 or in_water(x, z) or occupied(x, z):
             continue
@@ -1305,7 +1429,7 @@ def plant_vegetation(B, L):
     scatter('Ferns', fern[0], ferns, summer)
     scatter('Stumps', stump[0], stumps, veg)
     scatter('Branches', branch[0], branches, veg)
-    for gx0, gz0 in ((-13, -4), (12, -5), (-12, -23), (13, -24), (-26, 14), (-9, 29)):
+    for gx0, gz0 in ((-13, -4), (12, -5), (-12, -23), (13, -24), (-26, 14), (6, 36)):
         for i in range(16):
             a, rr = i * 2.399, math.sqrt(i) * .5
             shrubs.append((gx0 + cos(a) * rr, ground_y(gx0, gz0) - .05, gz0 + sin(a) * rr, rng.random() * TAU, .7 + (i % 3) * .15, rng.randrange(4)))
@@ -1422,6 +1546,7 @@ def add_lights_and_cameras(L):
         ob = bpy.data.objects.new(f'Lamp {i}', d)
         ob.location = bl(*l['pos'])
         ob['day'], ob['dusk'] = float(l['day']), float(l['dusk'])
+        ob.visible_glossy = False  # fill lights must not show up as bright discs in glass and water
         night.objects.link(ob)
     fx = collection('Atmosphere')
     winter = collection('WinterOnly')
