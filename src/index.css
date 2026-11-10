@@ -577,53 +577,49 @@ footer .mark-hole {
   margin-bottom: clamp(1.8rem, 3vw, 2.4rem);
 }
 
-/* --- pravý sloupec hera: rejstřík sekcí --- */
+/* --- pravý sloupec hera: vizualizace areálu --- */
 
-.hero-index {
-  border: 1px solid var(--line);
+.hero-figure {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 4 / 5;
   border-radius: var(--r);
-  background: rgba(255, 255, 255, 0.45);
-  padding: 1.5rem 1.6rem 1.2rem;
+  overflow: hidden;
+  background: var(--paper-3);
 }
 
-.hero-index > span {
-  display: block;
-  font-size: 0.68rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-  padding-bottom: 0.9rem;
-  border-bottom: 1px solid var(--line-soft);
+.hero-figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.hero-index a {
+.hero-figure figcaption {
+  position: absolute;
+  inset: auto 0 0 0;
   display: flex;
+  justify-content: space-between;
   align-items: baseline;
-  gap: 0.9rem;
-  padding: 0.68rem 0;
-  border-bottom: 1px solid var(--line-soft);
-  font-size: 0.94rem;
-  color: var(--text);
-  transition: color 0.22s, padding-left 0.22s;
-}
-
-.hero-index a:last-child {
-  border-bottom: none;
-}
-
-.hero-index a:hover {
-  color: var(--accent);
-  padding-left: 0.3rem;
-}
-
-.hero-index i {
-  font-style: normal;
+  gap: 1rem;
+  padding: 3rem 1.2rem 1rem;
   font-size: 0.68rem;
   font-weight: 500;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-  min-width: 1.4rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--on-dark);
+  background: linear-gradient(transparent, rgba(10, 18, 15, 0.78));
+}
+
+.hero-figure a {
+  color: var(--on-dark);
+  border-bottom: 1px solid var(--line-dark);
+  padding-bottom: 0.15rem;
+  white-space: nowrap;
+  transition: border-color 0.22s;
+}
+
+.hero-figure a:hover {
+  border-color: var(--accent-light);
 }
 
 /* --- pás statistik --- */
@@ -1426,6 +1422,68 @@ footer .brand-mark {
 }
 
 /* ==================================================================
+   Vizualizace: obrázky areálu
+================================================================== */
+
+.shots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.6rem, 1.4vw, 1rem);
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+.shot {
+  margin: 0;
+}
+
+.shot img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: var(--r);
+  background: var(--paper-3);
+}
+
+.shot-wide {
+  grid-column: 1 / -1;
+}
+
+.shot-wide img {
+  aspect-ratio: 21 / 9;
+}
+
+.shot figcaption {
+  margin-top: 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.dark .shot img {
+  background: var(--ink-2);
+}
+
+.dark .shot figcaption {
+  color: var(--on-dark-muted);
+}
+
+.section-head + .shots {
+  margin-top: 0;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.shots-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem 2.5rem;
+  flex-wrap: wrap;
+  margin-top: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+/* ==================================================================
    Reveal
 ================================================================== */
 
@@ -1454,8 +1512,8 @@ footer .brand-mark {
     grid-template-columns: 1fr;
   }
 
-  .hero-index {
-    max-width: 520px;
+  .hero-figure {
+    aspect-ratio: 16 / 10;
   }
 
   .split {
@@ -1554,9 +1612,12 @@ footer .brand-mark {
     font-size: 1.62rem;
   }
 
-  /* rejstřík je na mobilu duplicitní k menu — zbytečně prodlužuje hero */
-  .hero-index {
-    display: none;
+  .shots {
+    grid-template-columns: 1fr;
+  }
+
+  .shot-wide img {
+    aspect-ratio: 16 / 10;
   }
 }
 
@@ -1592,7 +1653,6 @@ footer .brand-mark {
   }
 
   .row:hover,
-  .hero-index a:hover,
   .btn:hover {
     transform: none;
     padding-left: 0;

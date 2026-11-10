@@ -15,17 +15,6 @@ const NAV = [
 ]
 
 /* rejstřík v pravém sloupci hera */
-const OBSAH = [
-  ['01', 'Filozofie', 'filozofie'],
-  ['02', 'Diagnostika', 'diagnostika'],
-  ['03', 'Regenerace', 'regenerace'],
-  ['04', 'Fyzioterapie', 'fyzioterapie'],
-  ['05', 'Masáže', 'masaze'],
-  ['06', 'Prostředí', 'prostredi'],
-  ['07', 'Den v klinice', 'den'],
-  ['08', 'Programy a ceny', 'programy'],
-]
-
 const DIAGNOSTIKA = [
   {
     t: 'Celotělová MRI',
@@ -337,6 +326,16 @@ function Mark() {
   )
 }
 
+/* Vizualizace z Blenderu (public/img). Poměr stran drží CSS, takže se stránka při načítání neposouvá. */
+function Shot({ src, alt, cap, wide }) {
+  return (
+    <figure className={wide ? 'shot shot-wide' : 'shot'}>
+      <img src={`/img/${src}.webp`} alt={alt} loading="lazy" decoding="async" />
+      <figcaption>{cap}</figcaption>
+    </figure>
+  )
+}
+
 function Leaf() {
   return (
     <svg className="env-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.1" aria-hidden="true">
@@ -477,15 +476,18 @@ export default function App() {
                 </div>
               </div>
 
-              <nav className="hero-index" aria-label="Obsah stránky">
-                <span>Obsah</span>
-                {OBSAH.map(([n, label, id]) => (
-                  <a key={id} href={`#${id}`} onClick={(e) => go(e, id)}>
-                    <i>{n}</i>
-                    {label}
-                  </a>
-                ))}
-              </nav>
+              <figure className="hero-figure">
+                <img
+                  src="/img/hero.webp"
+                  alt="Vizualizace: finská sauna na lesní louce za soumraku"
+                  width="864"
+                  height="1080"
+                />
+                <figcaption>
+                  <span>Vizualizace · lesní lázně</span>
+                  <a href="?sauna">Projít ve 3D →</a>
+                </figcaption>
+              </figure>
             </div>
 
             <div className="hero-stats">
@@ -597,6 +599,10 @@ export default function App() {
                 jedné chodbě. Terapie se neskládají náhodně — vždycky navazují na vaše výsledky.
               </p>
             </div>
+            <div className="shots shots-2 reveal">
+              <Shot src="finska-interior" alt="Vizualizace: interiér finské sauny s kamny" cap="Finská sauna" />
+              <Shot src="plunge" alt="Vizualizace: ochlazovací káď na terase sauny" cap="Ochlazení hned za dveřmi" />
+            </div>
 
             <div className="grid grid-3 reveal">
               {REGENERACE.map((c, i) => (
@@ -690,6 +696,20 @@ export default function App() {
                 </div>
               ))}
             </div>
+            <div className="shots reveal">
+              <Shot wide src="overview" alt="Vizualizace: lesní lázně z ptačí perspektivy" cap="Lesní lázně — tři sauny, odpočívárna a koupací jezírko na louce uprostřed lesa" />
+              <Shot src="pool" alt="Vizualizace: přírodní koupací jezírko s molem" cap="Koupací jezírko" />
+              <Shot src="lounge-interior" alt="Vizualizace: odpočívárna s lehátky a výhledem do lesa" cap="Odpočívárna" />
+            </div>
+            <div className="shots-foot reveal">
+              <p className="note">
+                Obrázky jsou vizualizace připravovaného areálu. Celý si ho můžete projít ve 3D modelu
+                a rozhlédnout se na jedenácti místech ve 360° pohledech.
+              </p>
+              <a href="?sauna" className="btn btn-primary">
+                Projít areál ve 3D
+              </a>
+            </div>
           </div>
         </section>
 
@@ -705,6 +725,9 @@ export default function App() {
                 Modelový průběh diagnosticko-regeneračního dne. Skutečný plán vždycky sestavujeme
                 podle toho, proč přijíždíte a co ukážou ranní odběry.
               </p>
+            </div>
+            <div className="shots reveal">
+              <Shot wide src="overview-dusk" alt="Vizualizace: areál lázní za soumraku s rozsvícenými cestami" cap="Večer v areálu" />
             </div>
             <div className="timeline reveal">
               {DEN.map(([time, title, desc]) => (

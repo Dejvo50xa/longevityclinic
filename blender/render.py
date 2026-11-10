@@ -40,7 +40,7 @@ PANORAMAS = [
     ('bazen', (-14.2, 1.4, 25.7), (-19, .5, 20), 0),
     ('u-vody', (-31, 1.6, 25.5), (-19, .5, 20), 0),
     ('klinika', (99.5, 1.75, -58.6), (101, 3, -70), 0),
-    ('vstup', (.5, 1.48, 21), (0, 1, 0), 0),
+    ('vstup', (.4, 1.6, 31.5), (-.5, 1, 12), 0),
     ('potok', (-30.2, 1.7, -21.9), (-28.6, -.3, -20.6), 0),
 ]
 _sun_cache = {}
@@ -130,17 +130,18 @@ def render_panoramas(plan, quick=False):
 
 
 # Fly-through: (three.js position, look-at target) waypoints, flown along a smooth curve.
-TOUR = [((18, 16, 42), (0, 1, 2)), ((7, 4.5, 22), (0, 1.5, 5)), ((8.5, 2.2, 9), (1, 1.4, 0)), ((-6, 2.6, 26), (-19, .6, 20)),
-        ((-22, 5.5, 37), (-31, 1.2, 24)), ((-20, 7, 8), (-33, 1.5, 0)), ((-15, 5, -11), (-28, 0, -23)), ((5, 5, -17), (0, 1.5, -29)),
-        ((30, 4.5, -25), (18, 2, -39)), ((46, 40, 58), (0, 0, -3))]
+TOUR = [((10, 30, 72), (0, 0, 22)), ((3.5, 3, 45), (-6, 1.5, 34)), ((.6, 1.9, 25), (0, 1.6, 6)), ((5.5, 1.8, 10.5), (0, 1.4, 0)),
+        ((-8, 3.5, 22), (-19, 0, 20)), ((-21, 2.3, 29), (-30, 1, 22)), ((-25, 3.5, 13), (-34, 1.2, 3)), ((-20, 4, -13), (-28.6, 0, -21)),
+        ((-3, 2.2, -19), (0, 1.5, -29)), ((24, 3.5, -28), (18, 2, -39)), ((46, 40, 58), (0, 0, -3))]
+DUSK_TAIL = 150  # the last frames are also rendered at dusk and cross-faded in, so the film ends in the evening
 
 
-def render_video(fps=25, seconds=36, engine='EEVEE', res=(1920, 1080), frames=None):
+def render_video(fps=25, seconds=44, engine='EEVEE', res=(1920, 1080), frames=None, mode='day', folder='tour_frames'):
     """Animate a camera along TOUR, render PNG frames (resumable), then encode an MP4 with Blender's own encoder."""
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from scene_kit import Curve, bl
     scene = bpy.context.scene
-    apply_mode(name='day')
+    apply_mode(name=mode)
     n = fps * seconds
     pos = Curve([(p[0], p[2]) for p, _ in TOUR])
     tgt = Curve([(t[0], t[2]) for _, t in TOUR])
@@ -194,11 +195,13 @@ def render_video(fps=25, seconds=36, engine='EEVEE', res=(1920, 1080), frames=No
     else:  # Cycles: scene stays on the GPU between frames; few samples, the denoiser does the rest
         scene.render.engine = 'CYCLES'
         scene.render.use_persistent_data = True
-        scene.cycles.samples = 24
-        scene.cycles.adaptive_threshold = .05
-    frames_dir = os.path.join(OUT, 'tour_frames')
+        scene.cycles.samples = 32
+        scene.cycles.adaptive_threshold = .035
+    frames_dir = os.path.join(OUT, folder)
     os.makedirs(frames_dir, exist_ok=True)
     scene.render.image_settings.file_format = 'PNG'
+    if mode != 'day':  # the evening version only covers the tail
+        frames = [f for f in (frames or range(1, n + 1)) if f > n - DUSK_TAIL]
     for f in frames or range(1, n + 1):
         path = os.path.join(frames_dir, f'{f:04d}.png')
         if os.path.exists(path):
@@ -217,12 +220,25 @@ def encode_video(fps=25, path=None, quality='HIGH'):
     scene.view_settings.view_transform = 'Standard'  # frames are already tone-mapped; the default AgX would dull them twice
     scene.view_settings.look = 'None'
     scene.sequence_editor_create()
-    strip = scene.sequence_editor.strips.new_image('tour', os.path.join(frames_dir, files[0]), 1, 1)
+    strips = scene.sequence_editor.strips
+    strip = strips.new_image('tour', os.path.join(frames_dir, files[0]), 1, 1)
     for f in files[1:]:
         strip.elements.append(f)
+    dusk_dir = os.path.join(OUT, 'tour_frames_dusk')
+    dusk = sorted(f for f in os.listdir(dusk_dir) if f.endswith('.png')) if os.path.isdir(dusk_dir) else []
+    if dusk:  # evening frames fade in over the first half of the tail and stay to the end
+        start = int(dusk[0][:4])
+        over = strips.new_image('dusk', os.path.join(dusk_dir, dusk[0]), 2, start)
+        for f in dusk[1:]:
+            over.elements.append(f)
+        over.blend_type = 'ALPHA_OVER'
+        over.blend_alpha = 0.
+        over.keyframe_insert('blend_alpha', frame=start)
+        over.blend_alpha = 1.
+        over.keyframe_insert('blend_alpha', frame=start + len(dusk) // 2)
     scene.frame_start, scene.frame_end = 1, len(files)
     scene.render.fps = fps
-    scene.render.resolution_x, scene.render.resolution_y = 1280, 720
+    scene.render.resolution_x, scene.render.resolution_y = bpy.data.images.load(os.path.join(frames_dir, files[0])).size[:]
     scene.render.resolution_percentage = 100
     if hasattr(scene.render.image_settings, 'media_type'):  # Blender 5: choose video output first
         scene.render.image_settings.media_type = 'VIDEO'
@@ -259,7 +275,9 @@ def main(argv):
         if '--frames' in args:
             a, b = args[args.index('--frames') + 1].split('-')
             frames = range(int(a), int(b) + 1)
-        render_video(engine='EEVEE' if '--eevee' in args else 'CYCLES', res=(1280, 720), frames=frames)
+        res = (1280, 720) if quick else (1920, 1080)
+        render_video(engine='EEVEE' if '--eevee' in args else 'CYCLES', res=res, frames=frames)
+        render_video(engine='CYCLES', res=res, frames=frames, mode='dusk', folder='tour_frames_dusk')
     elif args and args[0] == 'encode':
         encode_video(**(dict(path=WEB_VIDEO, quality='MEDIUM') if '--web' in args else {}))
 
