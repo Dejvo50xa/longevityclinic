@@ -212,7 +212,7 @@ def render_video(fps=25, seconds=44, engine='EEVEE', res=(1920, 1080), frames=No
         print('frame', f, flush=True)
 
 
-def encode_video(fps=25, path=None, quality='HIGH'):
+def encode_video(fps=25, path=None, quality='HIGH', bitrate=None):
     """Join the PNG frames into an H.264 MP4 using Blender's sequencer."""
     frames_dir = os.path.join(OUT, 'tour_frames')
     files = sorted(f for f in os.listdir(frames_dir) if f.endswith('.png'))
@@ -245,7 +245,11 @@ def encode_video(fps=25, path=None, quality='HIGH'):
     scene.render.image_settings.file_format = 'FFMPEG'
     scene.render.ffmpeg.format = 'MPEG4'
     scene.render.ffmpeg.codec = 'H264'
-    scene.render.ffmpeg.constant_rate_factor = quality
+    scene.render.ffmpeg.constant_rate_factor = 'NONE' if bitrate else quality
+    if bitrate:  # the meadow is too detailed for a quality target: fix the size instead (kbit/s)
+        scene.render.ffmpeg.video_bitrate = bitrate
+        scene.render.ffmpeg.maxrate = int(bitrate * 1.5)
+        scene.render.ffmpeg.buffersize = bitrate * 2
     scene.render.ffmpeg.ffmpeg_preset = 'BEST'
     scene.render.ffmpeg.gopsize = fps  # a keyframe every second, so the web player can jump anywhere quickly
     scene.render.ffmpeg.audio_codec = 'NONE'
@@ -279,7 +283,7 @@ def main(argv):
         render_video(engine='EEVEE' if '--eevee' in args else 'CYCLES', res=res, frames=frames)
         render_video(engine='CYCLES', res=res, frames=frames, mode='dusk', folder='tour_frames_dusk')
     elif args and args[0] == 'encode':
-        encode_video(**(dict(path=WEB_VIDEO, quality='MEDIUM') if '--web' in args else {}))
+        encode_video(**(dict(path=WEB_VIDEO, bitrate=6500) if '--web' in args else {}))
 
 
 if __name__ == '__main__':
