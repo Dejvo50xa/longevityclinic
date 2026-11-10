@@ -125,12 +125,12 @@ const MODES={
 // Photorealistic Blender renders of the same site (blender/), shown on request so they never slow the 3D view.
 const RENDERS=[
  {src:'flythrough',video:true,title:'Průlet areálem',text:'36 sekund letem přes všechna místa retreatu.'},
- {src:'overview-dusk',title:'Areál za soumraku',text:'Tři sauny, odpočívárna a jezírko v lese.'},
+ {src:'overview-dusk',title:'Areál za soumraku',text:'Tři sauny, odpočívárna, bazén a jezírko v lese.'},
  {src:'finska-day',title:'Finská sauna',text:'Terasa, kádě na ochlazení a pohled do lesa.'},
  {src:'finska-interior-day',title:'Uvnitř finské sauny',text:'Lavice z měkkého dřeva a kamna s kameny.'},
  {src:'plunge-day',title:'Ochlazovací káď',text:'Studená voda hned vedle saunové terasy.'},
  {src:'lounge-interior-day',title:'Odpočívárna',text:'Lehátka s výhledem do korun stromů.'},
- {src:'pool-day',title:'Přírodní bazén',text:'Kruhový bazén obklopený trávou a kameny.'},
+ {src:'pool-day',title:'Přírodní bazén',text:'Zapuštěný bazén s dřevěným molem, rákosím a kameny.'},
  {src:'ceremonial-winter-dusk',title:'Solná sauna v zimě',text:'Kruhová stavba za zimního soumraku.'},
  {src:'overview-winter-day',title:'Areál v zimě',text:'Zasněžený les a cesty mezi saunami.'},
 ]

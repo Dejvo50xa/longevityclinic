@@ -1,6 +1,6 @@
 #!/bin/sh
 # Web copies of the Blender renders: homepage pictures (public/img), the sauna gallery and the 360° photos.
-# Needs cwebp (brew install webp). Run from the repository root after rendering.
+# Needs cwebp and magick (brew install webp imagemagick). Run from the repository root after rendering.
 set -e
 R=~/dev/longevityclinic-blender-assets/renders
 mkdir -p public/img
@@ -14,13 +14,16 @@ EOT
 done
 # Hero: upright 4:5 crop from the middle of the Finnish sauna at dusk; social preview: 1200x630.
 cwebp -quiet -q 82 -m 6 -crop 528 0 864 1080 "$R/finska_dusk.png" -o public/img/hero.webp
-sips -s format png -z 675 1200 "$R/overview_dusk.png" --out /tmp/aevum-og.png >/dev/null
-sips -c 630 1200 /tmp/aevum-og.png --out public/og.png >/dev/null
+# The dusk overview is lifted a little (gamma) so it reads on a phone screen in daylight.
+magick "$R/overview_dusk.png" -gamma 1.7 /tmp/aevum-dusk.png
+cwebp -quiet -q 80 -m 6 -resize 1920 0 /tmp/aevum-dusk.png -o public/img/overview-dusk.webp
+magick /tmp/aevum-dusk.png -resize 1200x675 -gravity center -crop 1200x630+0+0 +repage public/og.png
 # Sauna page gallery.
 for s in overview_dusk finska_day finska_interior_day plunge_day lounge_interior_day pool_day ceremonial_winter_dusk overview_winter_day; do
   n=$(echo "$s" | tr _ -)
-  cwebp -quiet -q 78 -resize 1600 0 "$R/$s.png" -o "public/sauna-renders/$n.webp"
-  cwebp -quiet -q 70 -resize 320 0 "$R/$s.png" -o "public/sauna-renders/$n-thumb.webp"
+  src="$R/$s.png"; [ "$s" = overview_dusk ] && src=/tmp/aevum-dusk.png
+  cwebp -quiet -q 78 -resize 1600 0 "$src" -o "public/sauna-renders/$n.webp"
+  cwebp -quiet -q 70 -resize 320 0 "$src" -o "public/sauna-renders/$n-thumb.webp"
 done
 # 360° photos: full size and a smaller one for phones.
 for f in areal finska herbal solna odpocivarna ochlazeni bazen u-vody klinika vstup potok; do
