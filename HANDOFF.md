@@ -76,7 +76,8 @@ src/Vortex.jsx      228 ř.  ARCHIV — starý 3D vortex, nikde se neimportuje
 blender/                    fotorealistická verze areálu v Blenderu (viz blender/README.md)
 public/sauna-renders/       rendery z Blenderu: galerie, video, 360° fotky pano-*.webp
 public/favicon.svg          yin-yang značka
-public/og.png               1200×630 náhled pro sociální sítě
+public/og.png               1200×630 náhled pro sociální sítě (výřez z vizualizace)
+public/img/                 vizualizace pro hlavní stránku (hero, Regenerace, Prostředí, Den)
 public/robots.txt
 public/sitemap.xml
 ```
@@ -89,7 +90,6 @@ Nahoře jsou **datová pole**, pak pomocné komponenty, pak jedna velká
 | Pole | Tvar | Kam se renderuje |
 |---|---|---|
 | `NAV` | `[label, id]` | navigace + patička |
-| `OBSAH` | `[číslo, label, id]` | rejstřík v pravém sloupci hera |
 | `DIAGNOSTIKA` | `{t, d, tag}` | karty, `grid-4` |
 | `REGENERACE` | `{t, d, tag}` | karty, `grid-3` |
 | `FYZIO` | `{t, d, m}` | řádky `.row` |
@@ -104,7 +104,12 @@ Nahoře jsou **datová pole**, pak pomocné komponenty, pak jedna velká
 **Přidat službu = přidat objekt do pole.** Nesahej kvůli tomu do JSX.
 Když přidáš položku do `FAQ`, přidej ji **taky do JSON-LD `FAQPage`**
 v `index.html` — jinak se strukturovaná data rozejdou s obsahem.
-Když přidáš sekci, přidej ji i do `OBSAH`, ať sedí rejstřík v heru.
+
+**Obrázky (od listopadu 2026):** web používá vizualizace z Blenderu v `public/img/`.
+V heru je vpravo `.hero-figure` (svislý výřez, odkaz do 3D), v sekcích Regenerace,
+Prostředí a Den jsou mřížky `.shots` s komponentou `Shot` (`.shot-wide` přes celou šířku).
+Poměr stran drží CSS, obrázky mají `loading="lazy"`. Každý popisek a `alt` říká, že jde
+o vizualizaci — areál ještě nestojí. Soubory vyrábí `blender/web_images.sh`.
 
 Sekce (`id` pro kotvy, v tomhle pořadí):
 `filozofie` · `diagnostika` · `regenerace` · `fyzioterapie` · `masaze` ·
@@ -152,6 +157,9 @@ Jak je scéna postavená (vše jen z balíčku `three` a jeho `examples/jsm`):
 - **Bazének** na desktopu živě zrcadlí okolí (`Reflector`); v zimě je zamrzlý s vysekaným
   otvorem. Potok a jezírko leží pod úrovní terénu — terén je v jejich místě
   vyříznutý maskou `holeTexture`.
+- **Uspořádání areálu:** u příjezdu recepce se šatnami, u každé sauny studená káď a sprcha
+  (`coldSpot`), koupací jezírko zapuštěné do terénu (`poolLevel`, výřez v `holeTexture`),
+  úzké pěšiny a skupiny stromů mezi pavilony. Totéž je v `blender/scene_parts.py` — měň obojí.
 - **Postavy** skládá `person()` z kapslí (stoj, chůze, sed, leh, koupel) — jen pro
   měřítko, bez obličejů, ve stylu architektonického modelu.
 - **Vizualizace a 360° pohledy:** tlačítko „Vizualizace" otevře galerii renderů
@@ -221,7 +229,7 @@ tmavá. Vždycky ber akcent ze stejné sady jako podklad.
 Breakpointy `1100px` (grid-4 → 2 sloupce, hero a split se skládají),
 `900px` (section-head, grid-3, env, timeline, plans → 2 sloupce),
 `860px` (schová `.nav-links`, ukáže `.burger`), `720px` (všechno na 1 sloupec,
-skryje se `.hero-index`), `480px` (tlačítka na plnou šířku).
+`.shots` na jeden sloupec), `480px` (tlačítka na plnou šířku).
 Nový blok vždycky zkontroluj na 375 px šířky. Existuje blok
 `@media (prefers-reduced-motion: reduce)` — nové animace do něj dopiš.
 
@@ -305,7 +313,7 @@ Projdi ho po sobě, ať build neshoří na hlouposti:
 - [ ] Hlavní stránka neimportuje `three` ani `Vortex.jsx`
 - [ ] Nové bloky mají `.reveal` a používají CSS proměnné
 - [ ] Nová sekce má `id`, `.wrap` uvnitř, dvousloupcový `.section-head`
-      a je v `NAV` / `OBSAH`, pokud tam patří
+      a je v `NAV`, pokud tam patří
 - [ ] Střídání ploch sedí (paper → tone-2 → paper), žádné dvě tmavé za sebou
 - [ ] Ověřeno na 375 px
 - [ ] Disclaimer v patičce a `Otevíráme 2027` v heru pořád na místě
@@ -319,10 +327,8 @@ Projdi ho po sobě, ať build neshoří na hlouposti:
 Nápady, ne úkoly — David rozhodne:
 
 - skutečný název, doména, kontakty a ceny místo placeholderů
-- fotky prostředí — světlý layout je na ně stavěný (`public/`, `loading="lazy"`);
-  hero i sekce Prostředí unesou velkou fotografii bez přestavby
+- skutečné fotografie místo vizualizací, až areál vznikne (stačí vyměnit soubory v `public/img/`)
 - sekce o týmu a o vybavení
 - formulář na skutečný backend (Formspree / Vercel funkce) místo `mailto:`
 - anglická mutace pro zahraniční klienty
-- `og.png` z reálné fotky prostředí, až bude — současný je z tmavé verze webu
-  a barevně už neodpovídá
+- `og.png` z reálné fotky prostředí, až bude
