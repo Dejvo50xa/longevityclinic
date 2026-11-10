@@ -124,7 +124,7 @@ const MODES={
 
 // Photorealistic Blender renders of the same site (blender/), shown on request so they never slow the 3D view.
 const RENDERS=[
- {src:'flythrough',video:true,title:'Průlet areálem',text:'36 sekund letem přes všechna místa retreatu.'},
+ {src:'flythrough',video:true,title:'Průlet areálem',text:'44 sekund letem přes všechna místa retreatu, od příjezdu po soumrak.'},
  {src:'overview-dusk',title:'Areál za soumraku',text:'Tři sauny, odpočívárna, bazén a jezírko v lese.'},
  {src:'finska-day',title:'Finská sauna',text:'Terasa, kádě na ochlazení a pohled do lesa.'},
  {src:'finska-interior-day',title:'Uvnitř finské sauny',text:'Lavice z měkkého dřeva a kamna s kameny.'},

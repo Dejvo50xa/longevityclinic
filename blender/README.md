@@ -8,7 +8,7 @@ python3 blender/fetch_assets.py                     # ~800 MB do ~/dev/longevity
 blender -b -P blender/build_scene.py                # postaví scénu -> sauna.blend (~20 s)
 blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- stills
 blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- panoramas   # 11 × 360° fotek (~1 h)
-blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- video
+blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- video   # 44 s Full HD, den + soumrak na konci (~11 h)
 blender -b ~/dev/longevityclinic-blender-assets/sauna.blend -P blender/render.py -- encode
 blender -b -P blender/render.py -- encode --web      # menší kopie videa pro web -> public/sauna-renders/
 ```
