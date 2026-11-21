@@ -31,3 +31,17 @@
 /* Keep dialog dismissal available while long details scroll. */
 .detail-dialog .dialog-close{position:sticky;top:0;right:auto;margin:-25px -25px -11px auto;z-index:5;background:var(--paper)}
 @media(max-width:640px){.detail-dialog .dialog-close{margin:-14px -10px -22px auto}}
+
+/* Planned technology section */
+.technology-section{border-bottom:1px solid var(--line)}
+.technology-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--line)}
+.technology-card{padding:36px 32px 36px 0;border-bottom:1px solid var(--line)}
+.technology-card:nth-child(even){padding-left:36px;border-left:1px solid var(--line)}
+.technology-card .eyebrow{font-size:.75rem;margin-bottom:16px}
+.technology-card h3{font:400 clamp(2rem,3vw,2.8rem)/1.15 var(--serif);margin-bottom:20px}
+.technology-card>p:not(.eyebrow){color:var(--muted);max-width:52ch}
+.technology-card details{margin-top:24px;font-size:.875rem}
+.technology-card summary{cursor:pointer;color:var(--green);font-weight:600;padding-block:8px}
+.technology-card details p{margin-top:12px;color:var(--muted)}
+.technology-note{color:var(--muted);font-size:.8125rem;max-width:100ch;margin-top:26px}
+@media(max-width:640px){.technology-grid{grid-template-columns:1fr}.technology-card,.technology-card:nth-child(even){padding:28px 0;border-left:0}.technology-card h3{font-size:2.2rem}}

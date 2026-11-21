@@ -3,24 +3,24 @@
 const programs = {
   signature: {
     name: 'Signature Day', duration: '1 den', price: 'od 12 900 Kč', period: 'za den',
-    description: 'Jednodenní návštěva s konzultací u lékaře, základním krevním panelem a regenerací. Ubytování není součástí programu.',
+    description: 'Jednodenní vstupní zhodnocení zdraví. S lékařem proberete rodinnou anamnézu, výsledky základních vyšetření a priority prevence. Ubytování není součástí programu.',
     audience: 'Pro zájemce o úvodní konzultaci a základní vyšetření bez vícedenního pobytu.',
     includes: ['Vstupní konzultace s lékařem', 'Základní krevní panel, InBody a klidové EKG dle vhodnosti', 'Jedna regenerační terapie a 60minutová masáž', 'Oběd a vstup do wellness', 'Písemná doporučení pro další péči'],
     outcome: 'Lékař vám vysvětlí dostupné výsledky a připraví písemná doporučení. Termín konzultace výsledků závisí na délce laboratorního zpracování.',
   },
   reset: {
     name: 'Reset', duration: '3 dny', price: 'od 44 900 Kč', period: 'za pobyt',
-    description: 'Třídenní program s rozšířenou diagnostikou, fyzioterapií a regenerací. Počítáme se dvěma nocemi ubytování a plnou penzí.',
+    description: 'Třídenní pobyt pro podrobnější zhodnocení zdraví, pohybové vyšetření a sestavení osobního plánu. Podle vhodnosti jej doplní regenerace. Počítáme se dvěma nocemi ubytování a plnou penzí.',
     audience: 'Pro zájemce, kteří chtějí vyšetření a regenerační péči spojit s pobytem v areálu.',
     includes: ['Rozšířená diagnostika podle individuální indikace lékaře', 'Plánovaná nabídka MRI, DEXA a zátěžového vyšetření podle vhodnosti', 'Fyzioterapie, regenerační péče a masáže', 'Dvě noci ubytování a plná penze', 'Závěrečná konzultace a osobní plán'],
     outcome: 'Lékař s vámi projde dostupné výsledky a navrhne další péči. U vyšetření s delší dobou zpracování domluví způsob předání výsledků.',
   },
   longevity: {
     name: 'Longevity', duration: '12 měsíců', price: 'od 189 000 Kč', period: 'za rok',
-    description: 'Dvanáct měsíců péče se čtvrtletními konzultacemi u lékaře a pravidelnou fyzioterapií.',
-    audience: 'Pro zájemce o pravidelné kontroly u stejného lékaře a průběžnou úpravu doporučení.',
+    description: 'Hlavní program AEVUM: dvanáct měsíců návazné preventivní péče. Po úvodním zhodnocení stanovíte s lékařem priority a při čtvrtletních konzultacích upravíte plán podle výsledků a každodenních možností.',
+    audience: 'Pro zájemce o dlouhodobou práci na zdravotních rizicích, fyzické kondici a návycích s návaznou péčí lékaře.',
     includes: ['Dva diagnostické dny během roku podle vhodnosti vyšetření', 'Průběžný kontakt s vlastním lékařem', 'Čtvrtletní kontroly a aktualizace plánu', 'Dvanáct jednotek fyzioterapie', 'Přístup k regeneračnímu zázemí podle finálních podmínek'],
-    outcome: 'Při kontrolách lékař porovná výsledky s předchozími nálezy a upraví doporučení. Harmonogram programu upřesníme před otevřením.',
+    outcome: 'Při kontrolách lékař porovná vybrané ukazatele s výchozími hodnotami a probere s vámi pohyb, spánek i stravování. Podle vývoje upraví plán a termíny dalších vyšetření. Přístrojové metody budou volitelné podle indikace a finálních podmínek programu.',
   },
 };
 
@@ -28,7 +28,7 @@ const care = {
   diagnostika: {
     label: 'Diagnostika', title: 'Diagnostická vyšetření',
     description: 'Plánujeme krevní odběry, vyšetření složení těla a kondice i zobrazovací metody. Lékař vybere vhodná vyšetření podle zdravotní historie a důvodu návštěvy.',
-    points: ['Konzultace zdravotní historie a vašich cílů', 'Laboratorní vyšetření dle individuální potřeby', 'Vyšetření složení těla, kondice a pohybových funkcí', 'Zobrazovací metody podle indikace a dostupnosti', 'Vysvětlení výsledků, přínosů a limitů vyšetření'],
+    points: ['Konzultace zdravotní historie a vašich cílů', 'Laboratorní vyšetření dle individuální potřeby', 'Plánované měření tělesného složení, síly a VO₂max; DEXA dle indikace', 'Zobrazovací metody podle indikace a dostupnosti', 'Vysvětlení výsledků, přínosů a limitů vyšetření'],
     program: 'signature',
   },
   pohyb: {
@@ -39,14 +39,14 @@ const care = {
   },
   regenerace: {
     label: 'Regenerace', title: 'Regenerační služby',
-    description: 'Připravujeme sauny s ochlazovacím zázemím, masáže a odpočívárnu. Nabídku terapií a podmínky samostatného vstupu zveřejníme před otevřením.',
-    points: ['Plánovaný saunový svět a ochlazovací zázemí', 'Masáže podle vhodnosti a osobních preferencí', 'Klidové prostory s výhledem do přírody', 'Prostor pro nenáročný pohyb a odpočinek', 'Výběr terapií s ohledem na zdravotní stav'],
+    description: 'Připravujeme přístrojové zázemí s kryoterapií, hyperbarickou oxygenoterapií a červeným světlem. Jednotlivé metody budou mít vlastní indikace a podmínky použití. Doplní je sauny, masáže a odpočinek v přírodě.',
+    points: ['Kryoterapie po posouzení zdravotního stavu', 'Hyperbarická oxygenoterapie pro konkrétní lékařské indikace', 'Červené a blízké infračervené světlo podle účelu přístroje', 'Sauny, masáže a klidové prostory', 'Vysvětlení přínosů, omezení a kontraindikací každé metody'],
     program: 'reset',
   },
   dlouhodoba: {
-    label: 'Kontroly', title: 'Průběžné kontroly',
-    description: 'V ročním programu počítáme se čtvrtletními konzultacemi. Lékař při nich porovná nové výsledky s předchozími a podle potřeby upraví další péči.',
-    points: ['Průběžné konzultace s lékařem', 'Pravidelné vyhodnocení dostupných výsledků', 'Úprava doporučení pro pohyb a regeneraci', 'Navazující fyzioterapie', 'Spolupráce s vašimi stávajícími lékaři podle potřeby'],
+    label: 'Dlouhověkost', title: 'Dlouhodobý plán zdraví',
+    description: 'Dlouhověkost v AEVUM znamená péči zaměřenou na zdraví, kondici a soběstačnost s přibývajícím věkem. Plánujeme čtvrtletní konzultace, opakované hodnocení vybraných ukazatelů a návaznost doporučení mezi jednotlivými návštěvami.',
+    points: ['Průběžné konzultace s lékařem', 'Pravidelné vyhodnocení dostupných výsledků', 'Osobní plán pohybu, spánku, stravování a regenerace', 'Navazující fyzioterapie', 'Spolupráce s vašimi stávajícími lékaři podle potřeby'],
     program: 'longevity',
   },
 };
@@ -145,13 +145,13 @@ function showComparison() {
     <p class="dialog-lead">Délka, obsah a orientační ceny připravovaných programů. Konkrétní vyšetření bude navrhovat lékař.</p>
     <div class="comparison-scroll" tabindex="0" role="region" aria-label="Porovnání programů, na menším displeji lze posouvat do stran"><table class="comparison-table"><caption class="sr-only">Orientační porovnání připravovaných programů AEVUM</caption><thead><tr><th scope="col">Program</th><th scope="col">Signature Day</th><th scope="col">Reset</th><th scope="col">Longevity</th></tr></thead><tbody>
       <tr><th scope="row">Délka</th><td>1 den</td><td>3 dny</td><td>12 měsíců</td></tr>
-      <tr><th scope="row">Zaměření</th><td>Základní vyšetření</td><td>Diagnostika a pobyt</td><td>Roční péče</td></tr>
+      <tr><th scope="row">Zaměření</th><td>Základní vyšetření</td><td>Diagnostika a pobyt</td><td>Dlouhodobá prevence a kondice</td></tr>
       <tr><th scope="row">Diagnostika</th><td>Základní panel</td><td>Rozšířená dle indikace</td><td>Pravidelné kontroly</td></tr>
-      <tr><th scope="row">Regenerace</th><td>Terapie a masáž</td><td>Během pobytu</td><td>Průběžně během roku</td></tr>
+      <tr><th scope="row">Regenerace</th><td>Terapie a masáž</td><td>Během pobytu</td><td>Dle osobního plánu</td></tr>
       <tr><th scope="row">Ubytování</th><td>Bez ubytování</td><td>2 noci, plná penze</td><td>Dle finální nabídky</td></tr>
       <tr><th scope="row">Orientační cena</th><td>od 12 900 Kč / den</td><td>od 44 900 Kč / pobyt</td><td>od 189 000 Kč / rok</td></tr>
       <tr><th scope="row">Podrobnosti</th><td><button type="button" class="text-link" data-program="signature">Signature Day</button></td><td><button type="button" class="text-link" data-program="reset">Reset</button></td><td><button type="button" class="text-link" data-program="longevity">Longevity</button></td></tr>
-    </tbody></table></div><p class="dialog-note">Ceny i obsah jsou orientační. Přesnou nabídku obdržíte před potvrzením objednávky.</p>
+    </tbody></table></div><p class="dialog-note">Ceny i obsah jsou orientační. Přístrojové procedury nejsou automatickou součástí všech programů; jejich vhodnost, rozsah a cenu upřesníme před objednávkou.</p>
   `, true);
 }
 
