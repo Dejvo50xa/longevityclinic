@@ -1,129 +1,125 @@
 <!doctype html>
 <html lang="cs">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#f7f5f0" />
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173c34">
+  <meta name="description" content="Připravovaná klinika AEVUM v České republice. Jednodenní vyšetření, třídenní pobyt a roční program preventivní péče. Otevření plánujeme na rok 2027.">
+  <title>AEVUM - Připravovaná klinika dlouhověkosti</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/img/cormorant-medium.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="/img/manrope-regular.ttf" as="font" type="font/ttf" crossorigin>
 
-    <title>AEVUM — Klinika dlouhověkosti | Diagnostika, regenerace a fyzioterapie v přírodě</title>
-    <meta
-      name="description"
-      content="AEVUM je klinika dlouhověkosti uprostřed lesa. Špičková diagnostika (celotělová MRI, biologický věk, VO₂max), hyperbarická komora, kryoterapie, fyzioterapie, masáže a kompletní revitalizace pod jednou střechou."
-    />
-    <meta name="keywords" content="klinika dlouhověkosti, longevity klinika, biologický věk, hyperbarická komora, kryoterapie, fyzioterapie, wellness, regenerace, preventivní medicína, healthspan" />
-    <meta name="author" content="AEVUM" />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://longevityclinic-one.vercel.app/" />
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
-    <meta property="og:locale" content="cs_CZ" />
-    <meta property="og:site_name" content="AEVUM" />
-    <meta property="og:title" content="AEVUM — Klinika dlouhověkosti" />
-    <meta property="og:description" content="Rovnováha mezi špičkovou technologií a tichem přírody. Diagnostika, regenerace, fyzioterapie a masáže pod jednou střechou." />
-    <meta property="og:url" content="https://longevityclinic-one.vercel.app/" />
-    <meta property="og:image" content="https://longevityclinic-one.vercel.app/og.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="AEVUM — Klinika dlouhověkosti" />
-    <meta name="twitter:description" content="Špičková medicína uprostřed přírody. Diagnostika, regenerace, fyzioterapie, masáže." />
-    <meta name="twitter:image" content="https://longevityclinic-one.vercel.app/og.png" />
-
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "MedicalClinic",
-        "name": "AEVUM",
-        "description": "Klinika dlouhověkosti a regenerace — diagnostika, hyperbarická oxygenoterapie, kryoterapie, fyzioterapie, masáže a revitalizační programy v přírodním prostředí.",
-        "url": "https://longevityclinic-one.vercel.app/",
-        "image": "https://longevityclinic-one.vercel.app/og.png",
-        "address": {
-          "@type": "PostalAddress",
-          "addressCountry": "CZ",
-          "addressRegion": "Česká republika"
-        },
-        "medicalSpecialty": ["PreventiveMedicine", "PhysicalTherapy", "Sports"],
-        "availableService": [
-          { "@type": "MedicalTest", "name": "Celotělová MRI bez kontrastu" },
-          { "@type": "MedicalTest", "name": "Analýza biologického věku (epigenetické hodiny)" },
-          { "@type": "MedicalTest", "name": "Spiroergometrie a stanovení VO₂max" },
-          { "@type": "MedicalTherapy", "name": "Hyperbarická oxygenoterapie" },
-          { "@type": "MedicalTherapy", "name": "Celotělová kryoterapie" },
-          { "@type": "MedicalTherapy", "name": "Fyzioterapie a funkční diagnostika" },
-          { "@type": "MedicalTherapy", "name": "Manuální a lymfatické masáže" }
-        ]
-      }
-    </script>
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Musím být nemocný, abych mohl přijet?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Ne. AEVUM je postavené na prevenci. Většina klientů se cítí dobře a chce vědět, co se v těle děje dřív, než se objeví příznaky — a co s tím udělat."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Jak dlouho trvá vstupní diagnostika?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Kompletní vstupní den trvá zhruba 6 až 8 hodin včetně odběrů nalačno, zobrazovacích metod, zátěžového testu a závěrečné konzultace s lékařem."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Hradí to zdravotní pojišťovna?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Ne. Jde o nadstandardní preventivní a regenerační péči hrazenou klientem. Některé zaměstnavatelské benefity a smluvní programy lze uplatnit."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Můžu přijet jen na wellness a masáž?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Ano. Regenerační a wellness část je přístupná i bez diagnostického programu, kapacita je ale omezená a doporučujeme rezervaci předem."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Dostanu výsledky s sebou?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Ano. Všechna data najdete v klientské aplikaci spolu s vyhodnocením a konkrétním plánem. Data jsou vaše a můžete je kdykoli exportovat."
-            }
-          }
-        ]
-      }
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <noscript>
-      <div style="padding: 3rem; font-family: sans-serif; color: #26332e; background: #f7f5f0">
-        <h1>AEVUM — klinika dlouhověkosti</h1>
-        <p>Pro zobrazení webu prosím povolte JavaScript.</p>
+  <script type="module" src="/src/main.jsx"></script>
+  <link rel="canonical" href="https://longevityclinic-one.vercel.app/">
+  <meta property="og:title" content="AEVUM – Připravovaná klinika dlouhověkosti">
+  <meta property="og:description" content="Péče o zdraví v přírodě. Připravovaná klinika, otevření plánujeme na rok 2027.">
+  <meta property="og:image" content="https://longevityclinic-one.vercel.app/og.png">
+  <meta property="og:url" content="https://longevityclinic-one.vercel.app/">
+  <meta property="og:type" content="website">
+</head>
+<body>
+  <a class="skip-link" href="#main">Přejít na obsah</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="AEVUM - úvod">
+      <svg class="brand-symbol" viewBox="0 0 40 48" aria-hidden="true"><path d="M20 2C9 2 1 12 1 24s8 22 19 22c-9-8-9-17 0-22s9-14 0-22Z" fill="currentColor"/><path d="M24 3c9 2 15 10 15 21s-6 19-15 21c7-8 7-16 0-21s-7-13 0-21Z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
+      <span>AEVUM</span>
+    </a>
+    <nav class="desktop-nav" aria-label="Hlavní navigace">
+      <a href="#pristup">Náš přístup</a><a href="#pece">Péče</a><a href="#programy">Programy</a><a href="#prostredi">Prostředí</a><a href="#projekt">O projektu</a>
+    </nav>
+    <a class="button button-small header-cta" href="#kontakt">Mám zájem</a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav"><span>Menu</span><span class="menu-lines" aria-hidden="true"></span></button>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Mobilní navigace" hidden>
+      <a href="#pristup">Náš přístup</a><a href="#pece">Péče</a><a href="#programy">Programy</a><a href="#prostredi">Prostředí</a><a href="#projekt">O projektu</a><a href="#kontakt">Novinky o otevření</a>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero section-shell" id="top" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow hero-eyebrow">Připravovaná klinika dlouhověkosti</p>
+        <h1 id="hero-title">Péče o zdraví<br><em>v přírodě</em></h1>
+        <p class="hero-description">V AEVUM plánujeme lékařská vyšetření, fyzioterapii a pobyty s regenerací. Vybrat si budete moci jednodenní návštěvu, třídenní pobyt nebo péči na celý rok.</p>
+        <div class="hero-actions"><a class="button" href="#programy">Zobrazit programy</a><a class="text-link" href="#pristup">O klinice</a></div>
+        <div class="opening-note"><span class="opening-mark" aria-hidden="true">✳</span><p>Česká republika<br><strong>Plánované otevření 2027</strong></p></div>
       </div>
-    </noscript>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+      <figure class="hero-visual">
+        <img src="/img/clinic-concept.jpg" alt="Ilustrační koncept kliniky z kamene a dřeva v ranním světle uprostřed lesa" width="1536" height="1024" fetchpriority="high">
+        <div class="image-heading" aria-hidden="true">Návrh kliniky<br><em>v lese</em></div>
+        <figcaption>Ilustrační architektonický koncept · AI vizualizace</figcaption>
+        <a class="hero-image-link" href="#prostredi" aria-label="Prozkoumat prostředí kliniky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8"/></svg></a>
+      </figure>
+    </section>
+    <div class="principles section-shell" aria-label="Pilíře AEVUM"><p>Plánované služby</p><span>Lékařská vyšetření</span><span>Fyzioterapie</span><span>Regenerační pobyty</span></div>
+
+    <section class="approach section-shell section-space" id="pristup" aria-labelledby="approach-title">
+      <div class="section-intro"><p class="eyebrow">První konzultace</p><h2 id="approach-title">Vyšetření podle<br><em>vašich potřeb</em></h2></div>
+      <div class="approach-body"><p class="lead">Při vstupní konzultaci proberete s lékařem své obtíže, zdravotní historii a důvod návštěvy.</p><p>Lékař podle toho navrhne rozsah vyšetření. Po vyhodnocení výsledků s vámi projde doporučení pro další péči a vysvětlí, co jednotlivé nálezy znamenají.</p><a class="text-link" href="#cesta">Průběh péče</a></div>
+    </section>
+
+    <section class="intent-section section-shell" aria-labelledby="intent-title">
+      <div class="intent-heading"><p class="eyebrow">Výběr programu</p><h2 id="intent-title">Délka a zaměření</h2><p>Vyberte typ návštěvy, který vás zajímá.</p></div>
+      <div class="intent-options">
+        <button type="button" class="intent-option" data-intent="signature"><span class="intent-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><path d="M16 10v12M10 16h12"/></svg></span><span>Jednodenní<br><strong>vyšetření</strong></span><span class="intent-plus" aria-hidden="true">+</span></button>
+        <button type="button" class="intent-option" data-intent="reset"><span class="intent-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M7 23C6 9 16 5 26 6c0 13-7 20-19 17Zm0 0L21 11"/></svg></span><span>Třídenní pobyt<br><strong>s regenerací</strong></span><span class="intent-plus" aria-hidden="true">+</span></button>
+        <button type="button" class="intent-option" data-intent="longevity"><span class="intent-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 8C5-2-3 20 16 27 35 20 27-2 16 8Z"/><path d="m7 16 5 0 3-5 4 10 3-5h4"/></svg></span><span>Průběžná péče<br><strong>na celý rok</strong></span><span class="intent-plus" aria-hidden="true">+</span></button>
+      </div>
+    </section>
+
+    <section class="care-section section-space" id="pece" aria-labelledby="care-title">
+      <div class="section-shell">
+        <div class="section-header"><div><p class="eyebrow">Plánované služby</p><h2 id="care-title">Vyšetření, pohyb<br><em>a regenerace</em></h2></div><p>Součástí programů mají být konzultace s lékařem, fyzioterapie i pobyt v regeneračním zázemí.</p></div>
+        <div class="care-grid">
+          <article class="care-item"><svg class="care-icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17"/><circle cx="24" cy="24" r="9"/><path d="M24 2v12m0 20v12M2 24h12m20 0h12"/></svg><h3>Diagnostika</h3><p class="care-label">Krevní a funkční vyšetření</p><p>Lékař vybere vyšetření podle zdravotní historie a vysvětlí výsledky i jejich omezení.</p><button class="text-link" data-care="diagnostika" type="button">Podrobnosti diagnostiky</button></article>
+          <article class="care-item"><svg class="care-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 35c7 0 4-22 12-22s4 22 12 22 4-22 10-22M6 24h36"/><circle cx="19" cy="7" r="3"/></svg><h3>Fyzioterapie</h3><p class="care-label">Individuální práce s terapeutem</p><p>Fyzioterapeut vyšetří váš pohyb a navrhne cvičení s ohledem na obtíže i běžnou zátěž.</p><button class="text-link" data-care="pohyb" type="button">Podrobnosti fyzioterapie</button></article>
+          <article class="care-item"><svg class="care-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M9 29c-2-14 8-22 30-22-1 21-9 31-25 27M9 40 31 18M18 30V19m0 11h11"/></svg><h3>Regenerace</h3><p class="care-label">Sauny, masáže a odpočinek</p><p>Připravujeme saunové zázemí s ochlazením, masáže a odpočívárnu s výhledem do lesa.</p><button class="text-link" data-care="regenerace" type="button">Podrobnosti regenerace</button></article>
+          <article class="care-item"><svg class="care-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 24c0-10 7-17 17-17s17 7 17 17-7 17-17 17S7 34 7 24Z"/><path d="M24 14v10l8 5M3 24h8m26 0h8"/></svg><h3>Kontroly</h3><p class="care-label">Péče v průběhu roku</p><p>V ročním programu počítáme s pravidelnými konzultacemi a úpravami doporučení podle kontrolních výsledků.</p><button class="text-link" data-care="dlouhodoba" type="button">Podrobnosti kontrol</button></article>
+        </div>
+        <p class="care-footnote">Rozsah služeb ještě připravujeme. O vhodnosti vyšetření a terapií rozhodne lékař.</p>
+      </div>
+    </section>
+
+    <section class="programs-section section-shell section-space" id="programy" aria-labelledby="programs-title">
+      <div class="section-header"><div><p class="eyebrow">Orientační nabídka</p><h2 id="programs-title">Programy<br><em>a ceny</em></h2></div><div class="programs-intro"><p>Programy se liší délkou a rozsahem péče. U pobytu Reset plánujeme také ubytování a plnou penzi.</p><button class="text-link" type="button" id="compare-programs">Porovnat programy</button></div></div>
+      <p class="selection-message" id="selection-message" role="status" hidden></p>
+      <div class="program-grid">
+        <article class="program-card" id="program-signature" tabindex="-1"><div class="program-topline"><span class="eyebrow">Jednodenní návštěva</span><span class="duration">1 den</span></div><h3>Signature Day</h3><p class="program-description">Konzultace, základní vyšetření a regenerace během jednoho dne.</p><div class="program-price"><span>od</span> 12 900 <span>Kč</span></div><p class="price-period">Orientační cena za den</p><ul class="check-list"><li>Úvodní konzultace s lékařem</li><li>Základní diagnostika a krevní panel</li><li>Regenerační terapie a masáž</li><li>Písemné doporučení dalších kroků</li></ul><button class="button button-outline" type="button" data-program="signature">Detail Signature Day</button><span class="program-note">Bez ubytování</span></article>
+        <article class="program-card featured" id="program-reset" tabindex="-1"><div class="program-topline"><span class="eyebrow">Pobyt s ubytováním</span><span class="duration">3 dny</span></div><h3>Reset</h3><p class="program-description">Vyšetření a fyzioterapie během třídenního pobytu se dvěma nocemi ubytování.</p><div class="program-price"><span>od</span> 44 900 <span>Kč</span></div><p class="price-period">Orientační cena za pobyt</p><ul class="check-list"><li>Rozšířená diagnostika dle indikace</li><li>Fyzioterapie a individuální regenerace</li><li>Ubytování a plná penze</li><li>Závěrečná konzultace a osobní plán</li></ul><button class="button button-light" type="button" data-program="reset">Detail Reset</button><span class="program-note">Součástí pobytu je plná penze</span></article>
+        <article class="program-card" id="program-longevity" tabindex="-1"><div class="program-topline"><span class="eyebrow">Roční péče</span><span class="duration">12 měsíců</span></div><h3>Longevity</h3><p class="program-description">Pravidelné kontroly a konzultace s lékařem v průběhu dvanácti měsíců.</p><div class="program-price"><span>od</span> 189 000 <span>Kč</span></div><p class="price-period">Orientační cena za rok</p><ul class="check-list"><li>Pravidelné diagnostické kontroly</li><li>Průběžná péče vlastního lékaře</li><li>Aktualizace osobního plánu</li><li>Pohyb a regenerace během roku</li></ul><button class="button button-outline" type="button" data-program="longevity">Detail Longevity</button><span class="program-note">Čtvrtletní kontroly</span></article>
+      </div>
+      <p class="programs-note">Připravované programy pro otevření v roce 2027. Uvedené ceny a rozsah jsou orientační a mohou se změnit. Konečnou nabídku obdržíte před potvrzením objednávky.</p>
+    </section>
+
+    <section class="journey section-shell section-space" id="cesta" aria-labelledby="journey-title">
+      <div class="journey-intro"><p class="eyebrow">Organizace návštěvy</p><h2 id="journey-title">Průběh<br><em>péče</em></h2><p>Následující postup popisuje plánovanou návštěvu. Přesný harmonogram upřesníme před otevřením.</p><a class="text-link" href="#kontakt">Chci vědět víc</a></div>
+      <div class="journey-steps"><article><span class="step-mark" aria-hidden="true"></span><div><h3>Úvodní rozhovor</h3><p>Proberete s lékařem důvod návštěvy, užívané léky a předchozí vyšetření.</p></div></article><article><span class="step-mark" aria-hidden="true"></span><div><h3>Výběr vyšetření</h3><p>Lékař navrhne vyšetření podle vaší zdravotní historie a vysvětlí, co z nich lze zjistit.</p></div></article><article><span class="step-mark" aria-hidden="true"></span><div><h3>Vyhodnocení výsledků</h3><p>Nad výsledky proberete další péči. Doporučení dostanete písemně, abyste se k nim mohli vrátit.</p></div></article><article><span class="step-mark" aria-hidden="true"></span><div><h3>Následné kontroly</h3><p>U ročního programu plánujeme čtvrtletní konzultace, při kterých lékař zhodnotí výsledky a upraví doporučení.</p></div></article></div>
+    </section>
+
+    <section class="environment" id="prostredi" aria-labelledby="environment-title">
+      <div class="environment-image"><img src="/img/clinic-concept.jpg" alt="Ilustrační architektonický koncept: klinika obklopená lesem a zahradou" width="1536" height="1024" loading="lazy"><span class="image-credit">Ilustrační koncept · AI vizualizace</span></div>
+      <div class="environment-content"><p class="eyebrow">Návrh areálu</p><h2 id="environment-title">Ubytování<br><em>a lesní lázně</em></h2><p>V návrhu počítáme s pokoji pro vícedenní pobyty, saunami a odpočívárnou. Okolní les má sloužit k procházkám a venkovnímu pohybu.</p><div class="environment-features"><span>Pokoje pro pobyty</span><span>Odpočívárna</span><span>Sauny a ochlazení</span><span>Venkovní okruhy</span></div><button class="text-link" type="button" id="open-gallery">Prohlédnout vizualizace areálu</button><p class="environment-note">Přesná lokalita a podoba areálu jsou v přípravě.</p></div>
+    </section>
+
+    <section class="project-section section-shell section-space" id="projekt" aria-labelledby="project-title">
+      <div><p class="eyebrow">Stav příprav</p><h2 id="project-title">Příprava<br><em>kliniky AEVUM</em></h2></div>
+      <div class="project-copy"><p class="lead">Otevření plánujeme na rok 2027.</p><p>Projekt připravujeme v České republice. Na tomto webu zatím představujeme nabídku služeb a orientační ceny.</p><p>Přesnou lokalitu, termín otevření a jména odborníků včetně jejich kvalifikací zveřejníme před zahájením provozu.</p><div class="project-status"><span>Předpokládané otevření</span><strong>2027</strong></div></div>
+    </section>
+
+    <section class="faq-section section-shell section-space" id="dotazy" aria-labelledby="faq-title"><div><p class="eyebrow">Otázky před návštěvou</p><h2 id="faq-title">Praktické<br><em>informace</em></h2><a class="text-link" href="#kontakt">Mám jinou otázku</a></div><div class="faq-list">
+      <details><summary>Termín otevření<span aria-hidden="true">+</span></summary><p>Kliniku zatím připravujeme; otevření plánujeme na rok 2027. Přesný termín a lokalitu zveřejníme před zahájením provozu.</p></details>
+      <details><summary>Rozdíly mezi programy<span aria-hidden="true">+</span></summary><p>Signature Day zahrnuje jednodenní návštěvu, Reset třídenní pobyt s ubytováním a Longevity péči na dvanáct měsíců. Rozsah vyšetření navrhne lékař při konzultaci.</p></details>
+      <details><summary>Výběr vyšetření<span aria-hidden="true">+</span></summary><p>Vyšetření si nemusíte vybírat předem. Lékař je doporučí podle důvodu návštěvy a zdravotní historie; vysvětlí také jejich přínosy a omezení.</p></details>
+      <details><summary>Ceny programů<span aria-hidden="true">+</span></summary><p>Ceny představují orientační plán pro zahájení provozu. Přesný rozsah péče i konečnou cenu dostanete před potvrzením objednávky.</p></details>
+      <details><summary>Samostatná regenerace<span aria-hidden="true">+</span></summary><p>Součástí záměru je také samostatná regenerační péče a masáže. Podmínky, dostupnost a možnosti rezervace upřesníme před otevřením.</p></details>
+      <details><summary>Vztah k běžné lékařské péči<span aria-hidden="true">+</span></summary><p>AEVUM má poskytovat preventivní a regenerační péči. Nadále budete potřebovat svého praktického lékaře; akutní a specializovanou péči klinika nenahrazuje.</p></details>
+    </div></section>
+
+    <section class="contact-section" id="kontakt" aria-labelledby="contact-title"><div class="section-shell contact-grid"><div class="contact-copy"><p class="eyebrow">Zájem o otevření</p><h2 id="contact-title">Novinky<br><em>o klinice</em></h2><p>V této ukázce si můžete vybrat program a vyzkoušet formulář. Přihlášení k novinkám spustíme až v ostré verzi webu.</p><div class="contact-opening"><span class="opening-mark" aria-hidden="true">✳</span><span>Česká republika<br><strong>Plánované otevření 2027</strong></span></div></div>
+      <div class="contact-form-wrap"><div class="prototype-note"><strong>Vizuální prototyp</strong><span>Formulář si můžete vyzkoušet. Údaje se neodesílají ani neukládají.</span></div><form id="interest-form"><div class="form-row"><label for="name">Vaše jméno <span>(nepovinné)</span></label><input id="name" name="name" type="text" autocomplete="name" placeholder="Jméno a příjmení" maxlength="100"></div><div class="form-row"><label for="email">E-mail <span>(povinné)</span></label><input id="email" name="email" type="email" autocomplete="email" placeholder="vas@email.cz" required maxlength="254" aria-describedby="email-error"><span class="field-error" id="email-error" hidden>Zadejte platnou e-mailovou adresu.</span></div><div class="form-row"><label for="interest">Oblast zájmu</label><div class="select-wrap"><select id="interest" name="interest"><option value="opening">Novinky o otevření kliniky</option><option value="signature">Signature Day - 1 den</option><option value="reset">Reset - 3 dny</option><option value="longevity">Longevity - 12 měsíců</option><option value="regeneration">Samostatná regenerace</option><option value="question">Jiná otázka</option></select></div></div><button class="button button-light form-submit" type="submit">Vyzkoušet formulář</button><p class="form-footnote">Toto je ukázka průchodu formulářem, nikoli rezervace.</p></form><div class="form-success" id="form-success" role="status" hidden><span class="success-icon" aria-hidden="true">✓</span><h3>Ukázka potvrzení</h3><p>Formulář je vyplněný správně. V prototypu údaje nikam neposíláme ani neukládáme.</p><p class="success-interest"></p><button class="text-link" id="reset-form" type="button">Zpět na formulář</button></div></div>
+    </div></section>
+  </main>
+  <footer class="site-footer section-shell"><div class="footer-top"><a class="brand footer-brand" href="#top" aria-label="AEVUM - zpět na úvod"><svg class="brand-symbol" viewBox="0 0 40 48" aria-hidden="true"><path d="M20 2C9 2 1 12 1 24s8 22 19 22c-9-8-9-17 0-22s9-14 0-22Z" fill="currentColor"/><path d="M24 3c9 2 15 10 15 21s-6 19-15 21c7-8 7-16 0-21s-7-13 0-21Z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg><span>AEVUM</span></a><p>Připravovaná klinika<br>dlouhověkosti v přírodě</p><nav aria-label="Navigace v zápatí"><a href="#programy">Programy</a><a href="#projekt">O projektu</a><a href="#dotazy">Časté dotazy</a><a href="#kontakt">Kontakt</a></nav></div><div class="footer-bottom"><p>© 2026 AEVUM</p><p>Připravovaný projekt. Vyobrazení jsou vizualizace, služby a ceny jsou orientační.</p></div></footer>
+  <dialog class="detail-dialog" id="detail-dialog" aria-labelledby="dialog-title"><button class="dialog-close" type="button" aria-label="Zavřít detail">×</button><div id="dialog-content"></div></dialog>
+  <noscript><div class="noscript-notice">Podrobnosti programů a ukázkový formulář vyžadují JavaScript. Veškerý základní obsah je dostupný na této stránce.</div></noscript>
+</body>
 </html>

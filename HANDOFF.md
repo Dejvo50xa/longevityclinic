@@ -1,3 +1,11 @@
+> November 2026 approved redesign: the homepage now lives in `index.html`,
+> `src/index.css`, and the plain JavaScript initializer `src/App.jsx`.
+> `src/main.jsx` loads the existing React/Three sauna only for `?sauna`.
+> Homepage imagery, local fonts, and licenses are in `public/img`.
+> The previous homepage layout and React component instructions below are historical.
+> The medical honesty rules and sauna implementation guidance still apply.
+> The contact form is explicitly a demonstration and sends no data.
+
 # HANDOFF — AEVUM, web kliniky dlouhověkosti
 
 Tenhle soubor je zadání pro jazykový model, který má na projektu pokračovat.
