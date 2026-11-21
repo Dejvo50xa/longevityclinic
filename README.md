@@ -36,3 +36,8 @@ public/             favicon, og.png, robots.txt, sitemap.xml
 ```
 
 Podrobné zadání pro další práci na webu je v `HANDOFF.md`.
+
+
+## November 2026 redesign
+
+The homepage is semantic HTML in `index.html`, styled by `src/index.css`; `src/App.jsx` initializes its dialogs, navigation and demo form. `src/main.jsx` loads React and the unchanged 3D sauna only for `?sauna`. Assets and font licenses are in `public/img`. No dependencies were added. The contact form is explicitly a demo and sends no data. Prices, services and opening date remain provisional.
