@@ -54,3 +54,21 @@ Editorial references reviewed on 2026-11-21:
 - https://www.aad.org/public/cosmetic/safety/red-light-therapy
 
 Validation: production build, structural and local-asset verification, desktop and mobile layout, technology disclosures and the updated Longevity dialog. No lint or type-check scripts are configured.
+
+
+## Detailed diagnostics and IBM Plex update (2026-11-22)
+
+Added eight diagnostic areas with planned tests, interpretation and follow-up, the results-report workflow, an illustrative care scenario, annual follow-up and five practical FAQ entries. The diagnostic overview is explicitly not included in every package; specialist availability remains provisional.
+
+Typography uses the same IBM Plex Sans, Serif and Mono families observed on hx.clinic. Fonts are self-hosted from the Google Fonts repository with their SIL Open Font License files in public/img. Heading weights and mixed sans/serif styling follow the reference. Motion is an original implementation: scroll-linked word emphasis, one-time section reveals, hero and dialog transitions. Reduced-motion preferences disable decorative motion; content remains available without JavaScript.
+
+Clinical editorial references:
+- https://medlineplus.gov/lab-tests/cholesterol-levels/
+- https://medlineplus.gov/lab-tests/hemoglobin-a1c-hba1c-test/
+- https://medlineplus.gov/lab-tests/comprehensive-metabolic-panel-cmp/
+- https://medlineplus.gov/lab-tests/c-reactive-protein-crp-test/
+- https://www.nhlbi.nih.gov/health/sleep-apnea/diagnosis
+- https://www.niams.nih.gov/health-topics/bone-mineral-density-tests-what-numbers-mean
+- https://www.cancer.gov/about-cancer/screening/screening-tests
+
+Validation: production build, structural/asset check (53 IDs), diff whitespace check, desktop/mobile overflow checks, expanded diagnostic content, font-family inspection, scroll emphasis transitioning from 0 to 32 words and an empty browser error log. Lint and TypeScript scripts are not configured.

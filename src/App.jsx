@@ -28,7 +28,7 @@ const care = {
   diagnostika: {
     label: 'Diagnostika', title: 'Diagnostická vyšetření',
     description: 'Plánujeme krevní odběry, vyšetření složení těla a kondice i zobrazovací metody. Lékař vybere vhodná vyšetření podle zdravotní historie a důvodu návštěvy.',
-    points: ['Konzultace zdravotní historie a vašich cílů', 'Laboratorní vyšetření dle individuální potřeby', 'Plánované měření tělesného složení, síly a VO₂max; DEXA dle indikace', 'Zobrazovací metody podle indikace a dostupnosti', 'Vysvětlení výsledků, přínosů a limitů vyšetření'],
+    points: ['Konzultace zdravotní historie a vašich cílů', 'Laboratorní vyšetření dle individuální potřeby', 'Plánované měření tělesného složení, síly a VO₂max; DEXA dle indikace', 'Zobrazovací metody podle indikace a dostupnosti', 'Vysvětlení výsledků, přínosů a limitů vyšetření', 'Písemný přehled priorit a doporučených kontrol'],
     program: 'signature',
   },
   pohyb: {
@@ -133,7 +133,7 @@ function showCare(key) {
     <p class="eyebrow">Oblast plánované péče · ${item.label}</p>
     <h2 id="dialog-title">${item.title}</h2>
     <p class="dialog-lead">${item.description}</p>
-    <h3>Plánované služby</h3><ul>${item.points.map(point => `<li>${point}</li>`).join('')}</ul>
+    <h3>Plánované služby</h3><ul>${item.points.map(point => `<li>${point}</li>`).join('')}</ul><p class="dialog-lead">${key === 'diagnostika' ? 'Podrobný přehled osmi oblastí, způsob vyhodnocení a navazující péči najdete v sekci Diagnostika na hlavní stránce. Výběr testů i jejich zahrnutí do programu potvrdíme individuálně.' : 'Při plánování navážeme na vaše dosavadní výsledky, doporučení lékařů a možnosti v běžném životě.'}</p>
     <p class="dialog-note">Jde o plánovaný rozsah péče. Konkrétní odborníky, služby a jejich dostupnost představíme před otevřením.</p>
     <div class="dialog-actions"><button type="button" class="button" data-program="${item.program}">Detail programu ${programs[item.program].name}</button><button type="button" class="text-link" data-interest="${key === 'regenerace' ? 'regeneration' : 'question'}">Zeptat se na péči</button></div>
   `);
@@ -242,3 +242,50 @@ document.querySelector('#reset-form').addEventListener('click', () => {
   resetForm();
   document.querySelector('#name').focus();
 });
+
+
+// Motion is decorative; all content remains readable without JavaScript.
+const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+const readingParagraph = document.querySelector('.approach-body .lead');
+const readingText = readingParagraph.textContent;
+const visualReading = document.createElement('span');
+visualReading.setAttribute('aria-hidden', 'true');
+const spokenReading = document.createElement('span');
+spokenReading.className = 'sr-only';
+spokenReading.textContent = readingText;
+const readingWords = readingText.split(/(\s+)/).map(part => {
+  if (!part.trim()) return document.createTextNode(part);
+  const word = document.createElement('span');
+  word.className = 'read-word';
+  word.textContent = part;
+  return word;
+});
+visualReading.append(...readingWords);
+readingParagraph.replaceChildren(spokenReading, visualReading);
+const words = [...visualReading.querySelectorAll('.read-word')];
+let motionFrame = 0;
+function updateReading() {
+  motionFrame = 0;
+  const bounds = readingParagraph.getBoundingClientRect();
+  const progress = motionPreference.matches ? 1 : Math.max(0, Math.min(1,
+    (window.innerHeight * .9 - bounds.top) / (window.innerHeight * .45 + bounds.height * .4)));
+  words.forEach((word, index) => word.classList.toggle('is-read', index < Math.ceil(progress * words.length)));
+}
+function scheduleReading() {
+  if (!motionFrame) motionFrame = requestAnimationFrame(updateReading);
+}
+window.addEventListener('scroll', scheduleReading, { passive: true });
+window.addEventListener('resize', scheduleReading, { passive: true });
+motionPreference.addEventListener('change', updateReading);
+updateReading();
+if ('IntersectionObserver' in window) {
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      if (!motionPreference.matches) entry.target.classList.add('motion-enter');
+      revealObserver.unobserve(entry.target);
+    });
+  }, { threshold: .08 });
+  document.querySelectorAll('.section-header,.diagnostic-area,.results-grid article,.followup-list article,.technology-card')
+    .forEach(element => revealObserver.observe(element));
+}
