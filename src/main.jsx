@@ -10,6 +10,7 @@ async function start() {
       import('react-dom/client'),
       import('./Sauna.jsx'),
     ])
+    await document.fonts.load('400 16px "IBM Plex Sans"')
     createRoot(root).render(<React.StrictMode><Sauna /></React.StrictMode>)
   } else {
     await import('./App.jsx')
