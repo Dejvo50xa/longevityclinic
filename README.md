@@ -72,3 +72,6 @@ Clinical editorial references:
 - https://www.cancer.gov/about-cancer/screening/screening-tests
 
 Validation: production build, structural/asset check (53 IDs), diff whitespace check, desktop/mobile overflow checks, expanded diagnostic content, font-family inspection, scroll emphasis transitioning from 0 to 32 words and an empty browser error log. Lint and TypeScript scripts are not configured.
+
+
+Typography correction: HX registers the actual IBM Plex Serif Light file as weight 200. Use that exact cut instead of ExtraLight/Regular, including section and dialog headings. Remove unused legacy Cormorant/Manrope assets and replace sauna-specific Georgia/Arial rules. Browser scans confirmed only IBM Plex families on desktop, mobile, all three program dialogs and the sauna.
